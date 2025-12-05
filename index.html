@@ -436,7 +436,7 @@
 
             lucide.createIcons();
 
-           // Struktur Pemarkahan untuk kedua-dua program
+            // Struktur Pemarkahan untuk kedua-dua program
 const allAssessmentStructures = {
   "SES": {
     "1": { // SES Sem 1
@@ -450,8 +450,8 @@ const allAssessmentStructures = {
       ],
       pb: [
         { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 30, weightage: 15 },
-        { name: 'Amali', fullName: 'Laporan Amali', fullMarks: 30, weightage: 15 },
-        { name: 'Manipulatif', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 30, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
       ],
       ups: [
         { name: 'UPS1A', fullName: 'UPS 1A', fullMarks: 13 },
@@ -460,27 +460,33 @@ const allAssessmentStructures = {
         { name: 'UPS3', fullName: 'UPS 3', fullMarks: 14 }
       ],
       trial: [
-        { name: 'SChem', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
       ]
     },
     "2": { // SES Sem 2
       topikal: [
-        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 20 },
-        { name: 'UT8', fullName: 'Ujian Topikal 8', fullMarks: 20 },
-        { name: 'UT9', fullName: 'Ujian Topikal 9', fullMarks: 20 },
-        { name: 'UT10', fullName: 'Ujian Topikal 10', fullMarks: 20 }
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 7 },
+        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 7 },
+        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 8 },
+        { name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 5 },
+        { name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 15 },
+	{ name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 7 },
+        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 8 },
+        { name: 'UT8', fullName: 'Ujian Topikal 8', fullMarks: 13 },
+        { name: 'UT9', fullName: 'Ujian Topikal 9', fullMarks: 10 }
       ],
       pb: [
-        { name: 'Tugasan 2', fullName: 'Tugasan Individu 2', fullMarks: 30, weightage: 15 },
-        { name: 'Amali 2', fullName: 'Laporan Amali 2', fullMarks: 30, weightage: 15 },
-        { name: 'Manipulatif 2', fullName: 'Kemahiran Manipulatif 2', fullMarks: 20, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 30, weightage: 15 },
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 35, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
       ],
       ups: [
-        { name: 'UPS4', fullName: 'UPS 4', fullMarks: 40 },
-        { name: 'UPS5', fullName: 'UPS 5', fullMarks: 40 }
+        { name: 'UPS1', fullName: 'UPS 1A', fullMarks: 17 },
+        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 20 },
+        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 17 }
       ],
       trial: [
-        { name: 'SChem', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
       ]
     }
   },
@@ -496,9 +502,9 @@ const allAssessmentStructures = {
       ],
       pb: [
         { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 25, weightage: 10 },
-        { name: 'Numerasi', fullName: 'Numerasi', fullMarks: 10, weightage: 5 },
-        { name: 'Amali', fullName: 'Laporan Amali', fullMarks: 25, weightage: 15 },
-        { name: 'Manipulatif', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
+        { name: 'Num', fullName: 'Numerasi', fullMarks: 10, weightage: 5 },
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 25, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
       ],
       ups: [
         { name: 'UPS1', fullName: 'UPS 1A', fullMarks: 17 },
@@ -506,29 +512,35 @@ const allAssessmentStructures = {
         { name: 'UPS3', fullName: 'UPS 3', fullMarks: 17 }
       ],
       trial: [
-        { name: 'SChem', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
       ]
     },
     "2": { // SDS Sem 2
       topikal: [
-        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 20 },
-        { name: 'UT8', fullName: 'Ujian Topikal 8', fullMarks: 20 }
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 10 },
+	{ name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 10 },
+	{ name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 7 },
+	{ name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 13 },
+	{ name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 12 },
+	{ name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 17 },
+        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 11 }
       ],
       pb: [
-        { name: 'Tugasan 2', fullName: 'Tugasan Individu 2', fullMarks: 30, weightage: 15 },
-        { name: 'Amali 2', fullName: 'Laporan Amali 2', fullMarks: 30, weightage: 15 },
-        { name: 'Manipulatif 2', fullName: 'Kemahiran Manipulatif 2', fullMarks: 20, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 30, weightage: 15 },
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 30, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
       ],
       ups: [
-        { name: 'UPS4', fullName: 'UPS 4', fullMarks: 40 }
+        { name: 'UPS1', fullName: 'UPS 1', fullMarks: 17 },
+	{ name: 'UPS2', fullName: 'UPS 2', fullMarks: 18 },
+	{ name: 'UPS3', fullName: 'UPS 3', fullMarks: 16 }
       ],
       trial: [
-        { name: 'SChem', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
       ]
     }
   }
 };
-
             
             let currentAssessmentStructure = allAssessmentStructures.SES['1']; // Lalai
             let allAssessments = [];
@@ -1990,3 +2002,4 @@ function renderClassAnalysis() {
     </script>
 </body>
 </html>
+
