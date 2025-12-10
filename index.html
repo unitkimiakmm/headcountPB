@@ -294,8 +294,10 @@
                     </div>
                     <div class="flex justify-between items-center mt-4">
                         <p class="text-slate-600">Paparan laporan untuk kelas <strong id="report-class-name" class="text-slate-800"></strong>.</p>
-			 <p class="text-sm font-medium text-slate-700">Pensyarah</p>
-                        <p id="lecturer-display" class="mt-1 text-lg font-semibold text-slate-800 h-10 flex items-center">-</p>
+			<!-- Letakkan ini segera selepas elemen report-class-name -->
+			<div class="mt-2 mb-4">
+  			<p class="text-sm text-slate-700">Pensyarah Kelas: <strong id="report-lecturer-name" class="text-slate-800">—</strong></p>
+			</div>
                         <button id="print-class-report-btn" class="bg-sky-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-600 flex items-center">
                             <i data-lucide="printer" class="mr-2 h-5 w-5"></i>
                             Cetak Laporan Semasa
@@ -595,6 +597,7 @@ const allAssessmentStructures = {
             const classUtAnalysisBody = document.getElementById('class-ut-analysis-body');
             
             const reportClassNameEl = document.getElementById('report-class-name');
+	    const reportLecturerNameEl = document.getElementById('report-lecturer-name');
             const assessmentSelectEl = document.getElementById('assessment-select');
             const markEntryArea = document.getElementById('mark-entry-area');
             const entryDisabledWarning = document.getElementById('entry-disabled-warning');
@@ -1064,9 +1067,9 @@ const allAssessmentStructures = {
   		let topikalPctSum = 0, topikalCount = 0;
   		structure.topikal.forEach(ass => {
     		const s = parseFloat(studentScores[ass.name]);
-    		if (!isNaN(s)) { topikalPctSum += (s / ass.fullMarks) * 100; topikalCount++; }
+    		if (!isNaN(s)) { topikalPctSum += s; topikalCount += ass.fullMarks; }
   		});
-  		const topikal = topikalCount > 0 ? (topikalPctSum / topikalCount) * (40/100) : 0;
+  		const topikal = topikalCount > 0 ? (topikalPctSum / topikalCount) * 40 : 0;
 
   		// Percubaan -> normal ke 40 (untuk ETR2) jika ada
   		let trial = 0;
@@ -1097,12 +1100,23 @@ function renderAllClassReports() {
   }
 
   reportClassNameEl.textContent = state.currentClass;
+// Kod tambahan untuk paparan nama pensyarah
+if (state.lecturerDetails && state.lecturerDetails.NamaPensyarah) {
+    reportLecturerNameEl.textContent = state.lecturerDetails.NamaPensyarah;
+} else {
+    reportLecturerNameEl.textContent = state.user.full_name;
+}
   const currentClassData = state.classes[state.currentClass];
   const students = currentClassData.students || [];
   const program = currentClassData.program;
   const semester = state.viewableSemester;
   const structure = getAssessmentStructure(program, semester) || {};
   const classScores = state.scores[state.currentClass] || {};
+  const lecturerName = currentClassData.lecturer|| '—';
+
+	// set ke elemen di atas jadual
+ const reportLecturerEl = document.getElementById('report-lecturer');
+ if (reportLecturerEl) reportLecturerEl.textContent = lecturerName;
 
   // --- PB & UPS header (tambah trial jika ada) ---
   let pbUpsHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
@@ -1113,22 +1127,12 @@ function renderAllClassReports() {
     structure.trial.forEach(t => pbUpsHeader += `<th class="px-2 py-2">${t.name}</th>`);
   }
   // Tambah header ringkasan ETR dan gred
-  pbUpsHeader += `<th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred ETR1</th><th class="px-2 py-2 font-bold text-red-600">Gred ETR2</th><th class="px-2 py-2 font-bold text-red-600">Gred Purata</th>`;
-  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">Jml PB</th><th class="px-2 py-2 font-bold text-blue-600">Jml UPS</th><th class="px-2 py-2 font-bold text-green-600">AKHIR</th></tr></thead>`;
+  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">PB(40%)</th><th class="px-2 py-2 font-bold text-blue-600">UPS(20%)</th><th class="px-2 py-2 font-bold text-green-600">Jumlah(60%)</th></tr></thead>`;
 
   let pbUpsBody = '<tbody>';
   students.forEach((student, index) => {
     const studentScores = classScores[student.NoMatrik] || {};
     const calculated = calculateScores(state.currentClass, student.NoMatrik, program, semester) || {};
-
-    // Fallbacks supaya fungsi tahan jika calculateScores belum lengkap
-    const etr1 = (typeof calculated.etr1 === 'number') ? calculated.etr1 : (typeof calculated.totalEtr === 'number' ? calculated.totalEtr : 0);
-    const etr2 = (typeof calculated.etr2 === 'number') ? calculated.etr2 : (typeof calculated.trial === 'number' ? calculated.trial : 0);
-    const etrAvg = (typeof calculated.etrAvg === 'number') ? calculated.etrAvg : ((etr1 + etr2) / 2);
-
-    const grade1 = calculated.grade1?.grade || calculated.grade || '—';
-    const grade2 = calculated.grade2?.grade || '—';
-    const gradeAvg = calculated.gradeAvg?.grade || calculated.grade || '—';
 
     const pbVal = (typeof calculated.pb === 'number') ? calculated.pb : 0;
     const upsVal = (typeof calculated.ups === 'number') ? calculated.ups : 0;
@@ -1161,14 +1165,6 @@ function renderAllClassReports() {
       });
     }
 
-    // Ringkasan ETR & Gred
-    rowHtml += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr1).toFixed(2)}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr2).toFixed(2)}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-red-600">${Number(etrAvg).toFixed(2)}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-red-600">${grade1}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-red-600">${grade2}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-red-600">${gradeAvg}</td>`;
-
     // Jml PB / Jml UPS / Akhir
     rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${pbVal.toFixed(2)}</td>`;
     rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${upsVal.toFixed(2)}</td>`;
@@ -1183,11 +1179,10 @@ function renderAllClassReports() {
   // --- Topikal report (tambah ETR1/ETR2/Avg jika mahu) ---
   let topikalHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
   structure.topikal.forEach(a => {
-    topikalHeader += `<th class="px-2 py-2">${a.name} (Markah/%)</th>`;
-    topikalHeader += `<th class="px-2 py-2">${a.name} (Gred)</th>`;
+    topikalHeader += `<th class="px-2 py-2">${a.name}(Mrk/%)</th>`;
   });
   // Tambah lajur ringkasan ETR1/ETR2/Avg dan gred purata/status
-  topikalHeader += `<th class="px-2 py-2 font-bold text-purple-600">Jml UT (/40)</th><th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred Purata</th><th class="px-2 py-2 font-bold text-red-600">Status</th></tr></thead>`;
+  topikalHeader += `<th class="px-2 py-2 font-bold text-purple-600">J.UT(/40)</th><th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred Avg</th><th class="px-2 py-2 font-bold text-red-600">Lulus?</th></tr></thead>`;
 
   let topikalBody = '<tbody>';
   let totalGradePoints = 0;
@@ -1196,7 +1191,7 @@ function renderAllClassReports() {
     const calculated = calculateScores(state.currentClass, student.NoMatrik, program, semester) || {};
 
     // fallback values
-    const utVal = (typeof calculated.ut === 'number') ? calculated.ut : 0;
+    const utVal = (typeof calculated.topikal === 'number') ? calculated.topikal : 0;
     const etr1 = (typeof calculated.etr1 === 'number') ? calculated.etr1 : (typeof calculated.totalEtr === 'number' ? calculated.totalEtr : 0);
     const etr2 = (typeof calculated.etr2 === 'number') ? calculated.etr2 : 0;
     const etrAvg = (typeof calculated.etrAvg === 'number') ? calculated.etrAvg : ((etr1 + etr2) / 2);
@@ -1220,13 +1215,12 @@ function renderAllClassReports() {
         gradeDisplay = getGradeInfo(percentage).grade;
       }
       topikalBody += `<td class="px-2 py-2">${scoreDisplay} <span class="text-xs text-slate-500">${percentageDisplay}</span></td>`;
-      topikalBody += `<td class="px-2 py-2 font-medium">${gradeDisplay}</td>`;
     });
 
-    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${utVal.toFixed(2)}</td>`;
-    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr1).toFixed(2)}</td>`;
-    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr2).toFixed(2)}</td>`;
-    topikalBody += `<td class="px-2 py-2 font-bold text-red-600">${Number(etrAvg).toFixed(2)}</td>`;
+    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${utVal.toFixed(1)}</td>`;
+    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr1).toFixed(1)}</td>`;
+    topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr2).toFixed(1)}</td>`;
+    topikalBody += `<td class="px-2 py-2 font-bold text-red-600">${Number(etrAvg).toFixed(1)}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold text-red-600">${gradeAvgLabel}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold ${status === 'LULUS' ? 'text-green-600' : 'text-red-600'}">${status}</td></tr>`;
   });
@@ -1851,6 +1845,7 @@ function renderClassAnalysis() {
                 const html = `
                     <div>
                         <h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Laporan Kelas: ${reportClassNameEl.textContent || ''}</h2>
+			<h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Pensyarah: ${reportLecturerNameEl.textContent || ''}</h2>
                         ${isTopikal ? topikalReportDisplay.innerHTML : pbUpsReportDisplay.innerHTML}
                     </div>
                 `;
@@ -2002,5 +1997,3 @@ function renderClassAnalysis() {
     </script>
 </body>
 </html>
-
-
