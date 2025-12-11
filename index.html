@@ -296,7 +296,7 @@
                         <p class="text-slate-600">Paparan laporan untuk kelas <strong id="report-class-name" class="text-slate-800"></strong>.</p>
 			<!-- Letakkan ini segera selepas elemen report-class-name -->
 			<div class="mt-2 mb-4">
-  			<p class="text-sm text-slate-700">Pensyarah Kelas: <strong id="report-lecturer-name" class="text-slate-800">—</strong></p>
+  			<p class="text-sm text-slate-700">Pensyarah Kelas: <strong id="report-lecturer" class="text-slate-800">—</strong></p>
 			</div>
                         <button id="print-class-report-btn" class="bg-sky-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-600 flex items-center">
                             <i data-lucide="printer" class="mr-2 h-5 w-5"></i>
@@ -597,7 +597,7 @@ const allAssessmentStructures = {
             const classUtAnalysisBody = document.getElementById('class-ut-analysis-body');
             
             const reportClassNameEl = document.getElementById('report-class-name');
-	    const reportLecturerNameEl = document.getElementById('report-lecturer-name');
+	    const reportLecturerNameEl = document.getElementById('report-lecturer');
             const assessmentSelectEl = document.getElementById('assessment-select');
             const markEntryArea = document.getElementById('mark-entry-area');
             const entryDisabledWarning = document.getElementById('entry-disabled-warning');
@@ -1101,11 +1101,9 @@ function renderAllClassReports() {
 
   reportClassNameEl.textContent = state.currentClass;
 // Kod tambahan untuk paparan nama pensyarah
-if (state.lecturerDetails && state.lecturerDetails.NamaPensyarah) {
-    reportLecturerNameEl.textContent = state.lecturerDetails.NamaPensyarah;
-} else {
-    reportLecturerNameEl.textContent = state.user.full_name;
-}
+if (state.lecturerDetails && state.lecturerDetails.NamaPensyarah) { reportLecturerNameEl.textContent = state.lecturerDetails.NamaPensyarah; } 
+else { reportLecturerNameEl.textContent = state.user.full_name; }
+
   const currentClassData = state.classes[state.currentClass];
   const students = currentClassData.students || [];
   const program = currentClassData.program;
@@ -1182,7 +1180,7 @@ if (state.lecturerDetails && state.lecturerDetails.NamaPensyarah) {
     topikalHeader += `<th class="px-2 py-2">${a.name}(Mrk/%)</th>`;
   });
   // Tambah lajur ringkasan ETR1/ETR2/Avg dan gred purata/status
-  topikalHeader += `<th class="px-2 py-2 font-bold text-purple-600">J.UT(/40)</th><th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred Avg</th><th class="px-2 py-2 font-bold text-red-600">Lulus?</th></tr></thead>`;
+  topikalHeader += `<th class="px-2 py-2 font-bold text-purple-600">UT(40%)</th><th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred Avg</th><th class="px-2 py-2 font-bold text-red-600">Lulus?</th></tr></thead>`;
 
   let topikalBody = '<tbody>';
   let totalGradePoints = 0;
@@ -1470,7 +1468,23 @@ function renderGradeDistributionChart(containerId, gradeData1, gradeData2 = null
                 state.visibleLecturerClasses.forEach(className => {
                     let programForClass = allLecturerRowsForYear.find(l => l.KelasDiajar === className)?.Program;
                     const studentsInClass = studentsForSession.filter(s => s.Kelas === className && s.Program === programForClass);
-                    state.classes[className] = { students: studentsInClass, program: programForClass };
+			// Cari baris pensyarah yang mengajar kelas ini (gunakan lecturerRows dahulu, fallback ke allLecturerRowsForYear)
+			const lecturerRow = (lecturerRows.find(l => (l.KelasDiajar || '').trim() === className.trim()))
+                 	|| (allLecturerRowsForYear.find(l => (l.KelasDiajar || '').trim() === className.trim()));
+
+		// Ambil nama pensyarah dan emel (sesuaikan nama medan mengikut struktur data anda)
+		const lecturerName = lecturerRow?.NamaPensyarah || lecturerRow?.Nama || lecturerRow?.LecturerName || '—';
+		const lecturerEmail = lecturerRow?.Email || lecturerRow?.Emel || '';
+
+// Simpan ke state.classes termasuk medan lecturer dan lecturerEmail
+state.classes[className] = {
+  students: studentsInClass,
+  program: programForClass,
+  lecturer: lecturerName,
+  lecturerEmail: lecturerEmail
+};
+
+
                 });
 
                 if (state.isEditMode) {
