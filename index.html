@@ -1120,12 +1120,10 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
   let pbUpsHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
   (structure.pb || []).forEach(a => pbUpsHeader += `<th class="px-2 py-2">${a.name}</th>`);
   (structure.ups || []).forEach(a => pbUpsHeader += `<th class="px-2 py-2">${a.name}</th>`);
-  // jika ada trial, paparkan juga kolum trial
-  if (structure.trial && structure.trial.length) {
-    structure.trial.forEach(t => pbUpsHeader += `<th class="px-2 py-2">${t.name}</th>`);
-  }
+  
+  
   // Tambah header ringkasan ETR dan gred
-  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">PB(40%)</th><th class="px-2 py-2 font-bold text-blue-600">UPS(20%)</th><th class="px-2 py-2 font-bold text-green-600">Jumlah(60%)</th></tr></thead>`;
+  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">PB(40%)</th><th class="px-2 py-2 font-bold text-blue-600">UPS(20%)</th><th class="px-2 py-2 font-bold text-green-600">(60%)</th></tr></thead>`;
 
   let pbUpsBody = '<tbody>';
   students.forEach((student, index) => {
@@ -1145,7 +1143,7 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
     (structure.pb || []).forEach(a => {
       const score = studentScores[a.name];
       const scoreDisplay = (score === null || score === undefined) ? '' : score;
-      const weightedScore = (score === null || score === undefined) ? '' : `(${((score / a.fullMarks) * a.weightage).toFixed(2)}%)`;
+      const weightedScore = (score === null || score === undefined) ? '' : `(${((score / a.fullMarks) * a.weightage).toFixed(1)}%)`;
       rowHtml += `<td class="px-2 py-2">${scoreDisplay} <span class="text-xs text-slate-500">${weightedScore}</span></td>`;
     });
 
@@ -1155,18 +1153,12 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
       rowHtml += `<td class="px-2 py-2">${val === null || val === undefined ? '' : val}</td>`;
     });
 
-    // Trial cells (jika ada)
-    if (structure.trial && structure.trial.length) {
-      structure.trial.forEach(t => {
-        const v = studentScores[t.name];
-        rowHtml += `<td class="px-2 py-2">${v === null || v === undefined ? '' : v}</td>`;
-      });
-    }
+    
 
     // Jml PB / Jml UPS / Akhir
-    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${pbVal.toFixed(2)}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${upsVal.toFixed(2)}</td>`;
-    rowHtml += `<td class="px-2 py-2 font-bold text-green-600">${akhirVal.toFixed(2)}</td>`;
+    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${pbVal.toFixed(1)}</td>`;
+    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${upsVal.toFixed(1)}</td>`;
+    rowHtml += `<td class="px-2 py-2 font-bold text-green-600">${akhirVal.toFixed(1)}</td>`;
 
     rowHtml += `</tr>`;
     pbUpsBody += rowHtml;
@@ -1177,8 +1169,12 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
   // --- Topikal report (tambah ETR1/ETR2/Avg jika mahu) ---
   let topikalHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
   structure.topikal.forEach(a => {
-    topikalHeader += `<th class="px-2 py-2">${a.name}(Mrk/%)</th>`;
+    topikalHeader += `<th class="px-2 py-2">${a.name}(%)</th>`;
   });
+// jika ada trial, paparkan juga kolum trial
+if (structure.trial && structure.trial.length) {
+    structure.trial.forEach(t => topikalHeader += `<th class="px-2 py-2">${t.name}</th>`);
+  }
   // Tambah lajur ringkasan ETR1/ETR2/Avg dan gred purata/status
   topikalHeader += `<th class="px-2 py-2 font-bold text-purple-600">UT(40%)</th><th class="px-2 py-2 font-bold text-purple-600">ETR1</th><th class="px-2 py-2 font-bold text-purple-600">ETR2</th><th class="px-2 py-2 font-bold text-red-600">ETR Avg</th><th class="px-2 py-2 font-bold text-red-600">Gred Avg</th><th class="px-2 py-2 font-bold text-red-600">Lulus?</th></tr></thead>`;
 
@@ -1214,7 +1210,13 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
       }
       topikalBody += `<td class="px-2 py-2">${scoreDisplay} <span class="text-xs text-slate-500">${percentageDisplay}</span></td>`;
     });
-
+    // Trial cells (jika ada)
+    if (structure.trial && structure.trial.length) {
+      structure.trial.forEach(t => {
+        const v = studentScores[t.name];
+        topikalBody += `<td class="px-2 py-2">${v === null || v === undefined ? '' : v}</td>`;
+      });
+    }
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${utVal.toFixed(1)}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr1).toFixed(1)}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr2).toFixed(1)}</td>`;
@@ -1855,13 +1857,33 @@ function renderClassAnalysis() {
             }
 
             function updatePrintableArea() {
+                const currentDate = new Date().toLocaleDateString("ms-MY", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
                 const isTopikal = !topikalReportDisplay.classList.contains('hidden');
                 const html = `
                     <div>
-                        <h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Laporan Kelas: ${reportClassNameEl.textContent || ''}</h2>
-			<h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Pensyarah: ${reportLecturerNameEl.textContent || ''}</h2>
+                        <h2 style="font-size:10px;font-weight:bold;margin-bottom:8px;">Laporan Kelas: ${reportClassNameEl.textContent || ''}</h2>
+			<h2 style="font-size:10px;font-weight:bold;margin-bottom:8px;">Pensyarah: ${reportLecturerNameEl.textContent || ''}</h2>
                         ${isTopikal ? topikalReportDisplay.innerHTML : pbUpsReportDisplay.innerHTML}
                     </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+		<div style="margin-top: 10px; text-align: left;font-size:10px;font-weight:bold;">
+          	<p> Disediakan oleh: ${reportLecturerNameEl.textContent || ''}</p>
+          	<p><strong>Tarikh:</strong> ${currentDate}</p>
+          	<p style="margin-top: 5px;"><em>Tandatangan</em></p>
+          	<p style="margin-top: 10px;"><em>__________________________</em></p>
+        	</div>
+                <div class="right-text">
+		<div style="margin-top: 5px; text-align: left;font-size:10px;font-weight:bold;">
+          	<p> Disemak oleh: </p>
+          	<p><strong>Tarikh:</p>
+          	<p style="margin-top: 5px;"><em>Tandatangan</em></p>
+          	<p style="margin-top: 10px;"><em>__________________________</em></p>
+        	</div>
+		</div>
                 `;
                 printContainer.innerHTML = html;
             }
@@ -2011,7 +2033,6 @@ function renderClassAnalysis() {
     </script>
 </body>
 </html>
-
 
 
 
