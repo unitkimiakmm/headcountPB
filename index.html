@@ -1048,48 +1048,119 @@ const allAssessmentStructures = {
   		const studentScores = classScores[studentMatric] || {};
   		const structure = getAssessmentStructure(program, semester);
 
-  		// PB (mengikut weightage dalam struktur.pb)
-  		let pbTotal = 0;
-  		structure.pb.forEach(ass => {
-    		const s = parseFloat(studentScores[ass.name] || 0);
-    		if (!isNaN(s)) pbTotal += (s / ass.fullMarks) * ass.weightage;
- 		 });
+  		// =========================
+  // Helper Functions
+  // =========================
+  const toNum = (v) => {
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  };
 
-  		// UPS -> normal ke 20
-  		let totalUpsScore = 0, totalUpsFull = 0;
-  		structure.ups.forEach(ass => {
-    		const s = parseFloat(studentScores[ass.name]);
-    		if (!isNaN(s)) { totalUpsScore += s; totalUpsFull += ass.fullMarks; }
-  		});
-  		const ups = totalUpsFull > 0 ? (totalUpsScore / totalUpsFull) * 20 : 0;
+  const round3 = (num) => Math.round(num * 1000) / 1000;
 
-  		// Topikal -> normal ke 40 (untuk ETR1)
-  		let topikalPctSum = 0, topikalCount = 0;
-  		structure.topikal.forEach(ass => {
-    		const s = parseFloat(studentScores[ass.name]);
-    		if (!isNaN(s)) { topikalPctSum += s; topikalCount += ass.fullMarks; }
-  		});
-  		const topikal = topikalCount > 0 ? (topikalPctSum / topikalCount) * 40 : 0;
+  const safeDivide = (a, b) => (b > 0 ? a / b : 0);
 
-  		// Percubaan -> normal ke 40 (untuk ETR2) jika ada
-  		let trial = 0;
-  		if (structure.trial && structure.trial.length > 0) {
-    		const t = structure.trial[0];
-    		const s = parseFloat(studentScores[t.name]);
-    		if (!isNaN(s)) trial = (s / t.fullMarks) * t.weightage; // weightage 40
-  		}
 
-  		const pb = pbTotal;
-  		const etr1 = topikal + pb + ups;
-  		const etr2 = trial + pb + ups;
-  		const etrAvg = (etr1 + etr2) / 2;
+  // =========================
+  // PB Calculation
+  // =========================
+  const pb = structure.pb.reduce((total, ass) => {
+    let raw = 0;
 
-  		const grade1 = getGradeInfo(etr1);
-  		const grade2 = getGradeInfo(etr2);
-  		const gradeAvg = getGradeInfo(etrAvg);
+    if (ass.components) {
+      raw = studentScores[ass.name]?.total || 0;
+    } else {
+      raw = Number(studentScores[ass.name] || 0);
+    }
 
-  		return { pb, ups, topikal, trial, etr1, etr2, etrAvg, grade1, grade2, gradeAvg };
-		}
+    const normalized = safeDivide(raw, ass.fullMarks) * ass.weightage;
+    return total + normalized;
+
+  }, 0);
+
+
+  // =========================
+  // UPS (normalize to 20)
+  // =========================
+  let upsScore = 0;
+  let upsFull = 0;
+
+  structure.ups.forEach(ass => {
+    const s = toNum(studentScores[ass.name]);
+    if (s !== null) {
+      upsScore += s;
+      upsFull += ass.fullMarks;
+    }
+  });
+
+  const ups = safeDivide(upsScore, upsFull) * 20;
+
+
+  // =========================
+  // Topikal (normalize to 40)
+  // =========================
+  let topikalScore = 0;
+  let topikalFull = 0;
+
+  structure.topikal.forEach(ass => {
+    const s = toNum(studentScores[ass.name]);
+    if (s !== null) {
+      topikalScore += s;
+      topikalFull += ass.fullMarks;
+    }
+  });
+
+  const topikal = safeDivide(topikalScore, topikalFull) * 40;
+
+
+  // =========================
+  // Trial (ETR2)
+  // =========================
+  let trial = 0;
+
+  if (structure.trial?.length > 0) {
+    const t = structure.trial[0];
+    const s = toNum(studentScores[t.name]);
+
+    if (s !== null) {
+      trial = safeDivide(s, t.fullMarks) * t.weightage;
+    }
+  }
+
+
+  // =========================
+  // ETR Calculations
+  // =========================
+  const etr1_raw = topikal + pb + ups;
+  const etr2_raw = trial + pb + ups;
+  const etrAvg_raw = (etr1_raw + etr2_raw) / 2;
+
+
+  // =========================
+  // Final Rounded Values
+  // =========================
+  const result = {
+    pb: round3(pb),
+    ups: round3(ups),
+    topikal: round3(topikal),
+    trial: round3(trial),
+
+    etr1: round3(etr1_raw),
+    etr2: round3(etr2_raw),
+    etrAvg: round3(etrAvg_raw),
+  };
+
+
+  // =========================
+  // Grades
+  // =========================
+  result.grade1 = getGradeInfo(result.etr1);
+  result.grade2 = getGradeInfo(result.etr2);
+  result.gradeAvg = getGradeInfo(result.etrAvg);
+
+
+  return result;
+};
 
 
 function renderAllClassReports() {
