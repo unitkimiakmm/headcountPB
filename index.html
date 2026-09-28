@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pemarkahan Pelajar Unit Kimia</title>
+    <title>Sistem Pemarkahan PB Unit Kimia KMM</title>
     <!-- Memuatkan Tailwind CSS untuk penggayaan moden -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Memuatkan ikon Lucide untuk antara muka yang lebih menarik -->
@@ -93,7 +93,7 @@
     <div class="flex flex-col items-center">
       <!-- Logo di atas tengah -->
       <div class="mb-6">
-        <img id="login-logo" src="https://raw.githubusercontent.com/unitkimiakmm/headcountPB/main/logounit.png" alt="Logo Unit Kimia Melaka" class="h-20 w-auto object-contain" />
+        <img id="login-logo" src="https://raw.githubusercontent.com/unitkimiakmm/headcountPB/main/logounit.png" alt="Logo Unit Kimia" class="h-20 w-auto object-contain" />
 </div>          
 <!-- Kotak login -->
       <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
@@ -122,7 +122,7 @@
         </div>
 <!-- Footer -->
         <footer class="text-center mt-9 text-gray-400">
-            <p> © 2025 Unit Kimia KMM. All rights reserved.</p>
+            <p> © 2026 Unit Kimia KMM. All rights reserved.</p>
         </footer>
 
     </div>
@@ -139,7 +139,7 @@
         <!-- Tajuk Utama -->
         <header class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Sistem Pengurusan Markah PB & UT Unit Kimia KMM</h1>
-            <p class="text-slate-600 mt-2">Urus markah pelajar dengan mudah dan efisien.</p>
+            <p class="text-slate-600 mt-2">Pengurusan Markah Penilaian Berterusan dan Ujian Topikal untuk SES dan SDS</p>
         </header>
 
         <main class="space-y-8">
@@ -227,7 +227,7 @@
     
                     <!-- SES Section -->
                     <div id="dashboard-ses-section">
-                        <h3 class="text-lg font-bold text-indigo-700 border-b pb-2 mb-4 border-slate-200">Program Empat Semester (SES)</h3>
+                        <h3 class="text-lg font-bold text-indigo-700 border-b pb-2 mb-4 border-slate-200">Sistem Empat Semester (SES)</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-200 dashboard-table">
                                 <thead id="dashboard-table-head-ses" class="bg-slate-50"></thead>
@@ -239,7 +239,7 @@
 
                     <!-- SDS Section -->
                     <div id="dashboard-sds-section">
-                        <h3 class="text-lg font-bold text-emerald-700 border-b pb-2 mb-4 border-slate-200">Program Dua Semester (SDS)</h3>
+                        <h3 class="text-lg font-bold text-emerald-700 border-b pb-2 mb-4 border-slate-200">Sistem Dua Semester (SDS)</h3>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-200 dashboard-table">
                                 <thead id="dashboard-table-head-sds" class="bg-slate-50"></thead>
@@ -365,6 +365,183 @@
 
                 <!-- Tab 6: Urus Data (Admin) -->
                 <div id="admin-content" class="mt-6 hidden">
+<div class="bg-slate-50 p-6 rounded-lg mb-8">
+
+    <h3 class="text-lg font-semibold text-slate-800 mb-4">
+        ⚙️ Konfigurasi Sistem
+    </h3>
+
+    <div class="grid md:grid-cols-2 gap-4">
+
+        <div>
+            <label class="block text-sm font-medium">
+                Tahun Akademik Semasa
+            </label>
+
+            <select id="config-year"
+                class="mt-1 block w-full rounded-md border-slate-300">
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium">
+                Semester Semasa
+            </label>
+
+            <select id="config-semester"
+                class="mt-1 block w-full rounded-md border-slate-300">
+
+                <option value="1">Semester 1</option>
+
+                <option value="2">Semester 2</option>
+
+            </select>
+        </div>
+
+    </div>
+
+    <button id="save-config-btn"
+        class="mt-6 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700">
+
+        Simpan Tetapan Sistem
+
+    </button>
+
+    <span id="config-status"
+        class="hidden ml-4 text-green-600">
+
+        ✓ Tetapan berjaya disimpan
+
+    </span>
+
+</div>
+<div class="mt-8 border-t pt-6">
+
+    <h3 class="text-lg font-semibold text-slate-800 mb-4">
+        ⚙️ Konfigurasi Penilaian
+    </h3>
+
+<div class="grid md:grid-cols-3 gap-4 mb-4">
+
+    <div>
+        <label class="block text-sm font-medium">
+            Tahun Sesi
+        </label>
+
+        <select id="assessmentConfigYear"
+            class="mt-1 w-full rounded-md border-slate-300">
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium">
+            Program
+        </label>
+
+        <select id="assessmentConfigProgram"
+            class="mt-1 w-full rounded-md border-slate-300">
+            <option value="SES">SES</option>
+            <option value="SDS">SDS</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium">
+            Semester
+        </label>
+
+        <select id="assessmentConfigSemester"
+            class="mt-1 w-full rounded-md border-slate-300">
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+        </select>
+    </div>
+
+</div>
+
+    <div id="assessmentConfigContainer"
+        class="space-y-4">
+    </div>
+
+
+<div id="assessmentEditModal"
+     class="hidden fixed inset-0 bg-black/50 z-50">
+
+    <div class="bg-white
+                max-w-md
+                mx-auto
+                mt-20
+                rounded-lg
+                p-6">
+
+        <h3 class="text-lg font-semibold mb-4">
+            Edit Penilaian
+        </h3>
+
+        <input type="hidden"
+               id="editAssessmentId">
+
+        <div class="space-y-4">
+
+            <div>
+                <label>Nama Penilaian</label>
+
+                <input
+                    id="editAssessmentName"
+                    class="w-full rounded border">
+            </div>
+
+            <div>
+                <label>Markah Penuh</label>
+
+                <input
+                    id="editAssessmentMarks"
+                    type="number"
+                    class="w-full rounded border">
+            </div>
+
+            <div>
+    <label>Weightage (%)</label>
+
+    <input
+        id="editAssessmentWeightage"
+        type="number"
+        class="w-full rounded border">
+</div>
+
+<div id="editAssessmentComponents"
+     class="space-y-3 mt-4">
+</div>
+          
+
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+
+            <button
+                id="cancelAssessmentEdit"
+                class="px-4 py-2 border rounded">
+
+                Batal
+
+            </button>
+
+            <button
+                id="saveAssessmentEdit"
+                class="px-4 py-2 bg-blue-600 text-white rounded">
+
+                Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
                      <div id="admin-disabled-warning" class="hidden p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50" role="alert">
                         <span class="font-medium">Mod Paparan Sahaja!</span> Anda sedang melihat data semester lepas. Fungsi Admin dilumpuhkan. Sila pilih Tahun Sesi dan Semester semasa untuk mengurus data.
                     </div>
@@ -430,11 +607,177 @@
             const API_KEY = 'AIzaSyASE0C8W5yhfcU8jsK8ziijEJKr4RCFrbA'; // MASUKKAN KUNCI API GOOGLE ANDA
             
             // ** TETAPKAN TAHUN DAN SEMESTER SEMASA DI SINI **
-            const CURRENT_ACADEMIC_YEAR = "2026/2027"; // DIKEMAS KINI
-            const CURRENT_SEMESTER = "1"; // Guna "1" atau "2"
+            let CURRENT_ACADEMIC_YEAR;
+            let CURRENT_SEMESTER;
             // =================================================================
 
             const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+async function loadSystemSettings() {
+
+    const { data, error } = await supabaseClient
+        .from('system_settings')
+        .select('*')
+        .eq('id', 1)
+        .single();
+
+    if (error) {
+        console.error(error);
+
+        alert("Gagal memuatkan tetapan sistem.");
+
+        return false;
+    }
+
+    CURRENT_ACADEMIC_YEAR = data.current_academic_year;
+
+    CURRENT_SEMESTER = data.current_semester;
+
+    return true;
+}
+async function loadAssessmentStructures() {
+
+    const { data: settings, error: settingsError } =
+        await supabaseClient
+            .from('assessment_settings')
+            .select('*')
+	    .order('academic_year')
+            .order('programme')
+            .order('semester')
+            .order('category')
+            .order('display_order');
+
+    if (settingsError) {
+        console.error(
+            'Failed to load assessment settings:',
+            settingsError
+        );
+
+        return false;
+    }
+
+    const { data: components, error: componentError } =
+        await supabaseClient
+            .from('assessment_components')
+            .select('*')
+            .order('display_order');
+
+    if (componentError) {
+        console.error(
+            'Failed to load assessment components:',
+            componentError
+        );
+
+        return false;
+    }
+
+    state.dbAssessmentStructures =
+        transformAssessmentStructures(
+            settings,
+            components
+        );
+
+    console.log(
+        'Assessment structures loaded:',
+        state.dbAssessmentStructures
+    );
+
+    return true;
+}
+function transformAssessmentStructures(settings, components) {
+
+    const result = {};
+
+    settings.forEach(setting => {
+
+       const academicYear = setting.academic_year;
+	const programme = setting.programme;
+	const semester = setting.semester;
+
+if (!result[academicYear]) {
+    result[academicYear] = {};
+}
+
+if (!result[academicYear][programme]) {
+    result[academicYear][programme] = {};
+}
+
+if (!result[academicYear][programme][semester]) {
+    result[academicYear][programme][semester] = {
+        topikal: [],
+        pb: [],
+        ups: [],
+        trial: []
+    };
+}
+
+        const assessment = {
+            name: setting.assessment_code,
+            fullName: setting.assessment_name,
+            fullMarks: Number(setting.full_marks)
+        };
+
+        if (setting.weightage !== null) {
+            assessment.weightage =
+                Number(setting.weightage);
+        }
+
+        if (setting.is_component) {
+
+            const relatedComponents =
+                components
+                    .filter(component =>
+                        component.assessment_setting_id ===
+                        setting.id
+                    );
+
+            assessment.components = {};
+
+            relatedComponents.forEach(component => {
+
+                assessment.components[
+                    component.component_name.toLowerCase()
+                ] = {
+
+                    label: component.component_name,
+                    max: Number(component.full_marks)
+
+                };
+
+            });
+
+        }
+
+switch (setting.category) {
+
+    case 'UT':
+        result[academicYear][programme][semester]
+            .topikal
+            .push(assessment);
+        break;
+
+    case 'PB':
+        result[academicYear][programme][semester]
+            .pb
+            .push(assessment);
+        break;
+
+    case 'UPS':
+        result[academicYear][programme][semester]
+            .ups
+            .push(assessment);
+        break;
+
+    case 'TRIAL':
+        result[academicYear][programme][semester]
+            .trial
+            .push(assessment);
+        break;
+}
+
+    });
+
+    return result;
+}
 
             lucide.createIcons();
 
@@ -443,102 +786,84 @@ const allAssessmentStructures = {
   "SES": {
     "1": { // SES Sem 1
       topikal: [
-        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 22 },
-        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 10 },
-        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 8 },
-        { name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 20 },
-        { name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 10 },
-        { name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 10 }
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 100 },
+        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 100 },
+        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 100 }
       ],
       pb: [
-        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 30, weightage: 15 },
-        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 30, weightage: 15 },
-        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 50, weightage: 15, components: {essay: { label: 'Essay', max: 30 }, rubric: { label: 'Rubrik', max: 20 }}},
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 40, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 25, weightage: 10 }
       ],
       ups: [
-        { name: 'UPS1A', fullName: 'UPS 1A', fullMarks: 13 },
-        { name: 'UPS1B', fullName: 'UPS 1B', fullMarks: 20 },
-        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 10 },
-        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 14 }
+        { name: 'UPS1', fullName: 'UPS 1', fullMarks: 9 },
+        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 11 },
+        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 10 }
       ],
       trial: [
-        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'Trial', fullName: 'Trial', fullMarks: 80, weightage: 40 }
       ]
     },
     "2": { // SES Sem 2
-      topikal: [
-        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 7 },
-        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 7 },
-        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 8 },
-        { name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 5 },
-        { name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 15 },
-	{ name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 7 },
-        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 8 },
-        { name: 'UT8', fullName: 'Ujian Topikal 8', fullMarks: 13 },
-        { name: 'UT9', fullName: 'Ujian Topikal 9', fullMarks: 10 }
+     topikal: [
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 100 },
+        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 100 },
+        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 100 }
       ],
       pb: [
-        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 27, weightage: 15 },
-        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 35, weightage: 15 },
-        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 20, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 50, weightage: 15, components: {essay: { label: 'Essay', max: 30 }, rubric: { label: 'Rubrik', max: 20 }}},
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 40, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 25, weightage: 10 }
       ],
       ups: [
-        { name: 'UPS1', fullName: 'UPS 1A', fullMarks: 17 },
-        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 20 },
-        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 17 }
+        { name: 'UPS1', fullName: 'UPS 1', fullMarks: 9 },
+        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 11 },
+        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 10 }
       ],
       trial: [
-        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'Trial', fullName: 'Trial', fullMarks: 100, weightage: 40 }
       ]
     }
   },
   "SDS": {
     "1": { // SDS Sem 1
       topikal: [
-        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 21 },
-        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 10 },
-        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 17 },
-        { name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 9 },
-        { name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 9 },
-        { name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 14 }
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 100 },
+        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 100 },
+        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 100 }
       ],
       pb: [
-        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 40, weightage: 10 },
-        { name: 'Numerasi', fullName: 'Numerasi', fullMarks: 10, weightage: 5 },
-        { name: 'Amali', fullName: 'Laporan Amali', fullMarks: 26, weightage: 15 },
-        { name: 'Manipulatif', fullName: 'Kemahiran Manipulatif', fullMarks: 60, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 90, weightage: 15, components: {essay: { label: 'Essay', max: 65 }, rubric: { label: 'Rubrik', max: 25 }}},
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 40, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 25, weightage: 10 }
       ],
       ups: [
-        { name: 'UPS1', fullName: 'UPS 1A', fullMarks: 17 },
+        { name: 'UPS1', fullName: 'UPS 1', fullMarks: 17 },
         { name: 'UPS2', fullName: 'UPS 2', fullMarks: 16 },
-        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 17 }
+        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 13 }
       ],
       trial: [
-        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'Trial', fullName: 'Trial', fullMarks: 100, weightage: 40 }
       ]
     },
     "2": { // SDS Sem 2
       topikal: [
-        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 10 },
-	{ name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 10 },
-	{ name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 7 },
-	{ name: 'UT4', fullName: 'Ujian Topikal 4', fullMarks: 13 },
-	{ name: 'UT5', fullName: 'Ujian Topikal 5', fullMarks: 12 },
-	{ name: 'UT6', fullName: 'Ujian Topikal 6', fullMarks: 17 },
-        { name: 'UT7', fullName: 'Ujian Topikal 7', fullMarks: 11 }
+        { name: 'UT1', fullName: 'Ujian Topikal 1', fullMarks: 100 },
+        { name: 'UT2', fullName: 'Ujian Topikal 2', fullMarks: 100 },
+        { name: 'UT3', fullName: 'Ujian Topikal 3', fullMarks: 100 }
       ],
       pb: [
-        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 40, weightage: 15 },
-        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 35, weightage: 15 },
-        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 15, weightage: 10 }
+        { name: 'IA', fullName: 'Tugasan Individu', fullMarks: 90, weightage: 15, components: {essay: { label: 'Essay', max: 65 }, rubric: { label: 'Rubrik', max: 25 }}},
+        { name: 'LA', fullName: 'Laporan Amali', fullMarks: 40, weightage: 15 },
+        { name: 'KM', fullName: 'Kemahiran Manipulatif', fullMarks: 25, weightage: 10 }
       ],
       ups: [
         { name: 'UPS1', fullName: 'UPS 1', fullMarks: 17 },
-	{ name: 'UPS2', fullName: 'UPS 2', fullMarks: 18 },
-	{ name: 'UPS3', fullName: 'UPS 3', fullMarks: 16 }
+        { name: 'UPS2', fullName: 'UPS 2', fullMarks: 16 },
+        { name: 'UPS3', fullName: 'UPS 3', fullMarks: 13 }
       ],
       trial: [
-        { name: 'SCh', fullName: 'Smartchem', fullMarks: 80, weightage: 40 }
+        { name: 'Trial', fullName: 'Trial', fullMarks: 100, weightage: 40 }
       ]
     }
   }
@@ -625,7 +950,55 @@ const allAssessmentStructures = {
             const adminMarkEntryBody = document.getElementById('admin-mark-entry-body');
             const adminSaveMarksBtn = document.getElementById('admin-save-marks-btn');
             const adminSaveStatusEl = document.getElementById('admin-save-status');
+const configYearEl =
+    document.getElementById('config-year');
 
+const configSemesterEl =
+    document.getElementById('config-semester');
+
+const saveConfigBtn =
+    document.getElementById('save-config-btn');
+
+const configStatusEl =
+    document.getElementById('config-status');
+
+const assessmentConfigYear =
+    document.getElementById('assessmentConfigYear');
+
+const assessmentConfigProgram =
+    document.getElementById('assessmentConfigProgram');
+
+const assessmentConfigSemester =
+    document.getElementById('assessmentConfigSemester');
+
+const assessmentConfigContainer =
+    document.getElementById('assessmentConfigContainer');
+
+const assessmentEditModal =
+    document.getElementById('assessmentEditModal');
+
+const editAssessmentId =
+    document.getElementById('editAssessmentId');
+
+const editAssessmentName =
+    document.getElementById('editAssessmentName');
+
+const editAssessmentMarks =
+    document.getElementById('editAssessmentMarks');
+
+const editAssessmentWeightage =
+    document.getElementById('editAssessmentWeightage');
+
+const cancelAssessmentEdit =
+    document.getElementById('cancelAssessmentEdit');
+
+const saveAssessmentEdit =
+    document.getElementById('saveAssessmentEdit');
+
+const editAssessmentComponents =
+    document.getElementById(
+        'editAssessmentComponents'
+    );
 
             let state = {
                 user: null, 
@@ -639,7 +1012,10 @@ const allAssessmentStructures = {
                 viewableYear: CURRENT_ACADEMIC_YEAR,
                 viewableSemester: CURRENT_SEMESTER,
                 isEditMode: true, 
-                viewMode: null 
+                viewMode: null,
+		
+		// Phase B
+                dbAssessmentStructures: {}
             };
             let saveStatusTimeout;
             let adminSaveStatusTimeout;
@@ -884,6 +1260,15 @@ const allAssessmentStructures = {
                 // Isi dropdown tahun
                 const allYears = [...new Set(state.allLecturers.map(l => l.TahunAkademik))].sort().reverse();
                 yearSelectEl.innerHTML = '';
+
+generateAcademicSessions(CURRENT_ACADEMIC_YEAR)
+    .forEach(session => {
+        yearSelectEl.add(
+            new Option(session, session)
+        );
+    });
+
+yearSelectEl.value = state.viewableYear;
                 allYears.forEach(year => {
                     yearSelectEl.add(new Option(year, year));
                 });
@@ -969,9 +1354,28 @@ const allAssessmentStructures = {
                 }
             }
 
-            function getAssessmentStructure(program, semester) {
-                return allAssessmentStructures[program]?.[semester] || allAssessmentStructures.SES['1'];
-            }
+function getAssessmentStructure(program, semester, academicYear = state.viewableYear) {
+
+    const dbStructure =
+        state.dbAssessmentStructures
+            ?.[academicYear]
+            ?.[program]
+            ?.[semester];
+
+    if (dbStructure) {
+        return dbStructure;
+    }
+
+    console.warn(
+        `No DB assessment structure for ${academicYear} / ${program} / Sem ${semester}`
+    );
+
+    // Temporary fallback
+    return (
+        allAssessmentStructures?.[program]?.[semester]
+        || allAssessmentStructures.SES['1']
+    );
+}
             
             function renderAssessmentSelector() {
                 let programForStructure = state.lecturerDetails.Program; // Program asal pensyarah
@@ -995,6 +1399,243 @@ const allAssessmentStructures = {
                 });
                 markEntryArea.classList.add('hidden');
             }
+function renderAssessmentConfigViewer() {
+
+    if (
+        !assessmentConfigYear ||
+        !assessmentConfigProgram ||
+        !assessmentConfigSemester ||
+        !assessmentConfigContainer
+    ) return;
+
+    const academicYear =
+        assessmentConfigYear.value;
+
+    const programme =
+        assessmentConfigProgram.value;
+
+    const semester =
+        assessmentConfigSemester.value;
+
+    const structure =
+        state.dbAssessmentStructures
+            ?.[academicYear]
+            ?.[programme]
+            ?.[semester];
+
+    if (!structure) {
+
+        assessmentConfigContainer.innerHTML = `
+            <p class="text-slate-500">
+                Tiada konfigurasi dijumpai untuk
+                ${academicYear} / ${programme} / Semester ${semester}.
+            </p>
+        `;
+
+        return;
+    }
+
+    // rest of your existing rendering code...
+
+    const sections = [
+        {
+            title: 'UJIAN TOPIKAL',
+            items: structure.topikal || []
+        },
+        {
+            title: 'PENILAIAN BERTERUSAN',
+            items: structure.pb || []
+        },
+        {
+            title: 'UPS',
+            items: structure.ups || []
+        },
+        {
+            title: 'SMARTCHEM',
+            items: structure.trial || []
+        }
+    ];
+
+    assessmentConfigContainer.innerHTML = '';
+
+    sections.forEach(section => {
+
+        if (section.items.length === 0) return;
+
+        let html = `
+            <div class="bg-slate-50 rounded-lg p-4">
+
+                <h4 class="font-semibold text-slate-800 mb-3">
+                    ${section.title}
+                </h4>
+
+                <div class="space-y-2">
+        `;
+
+        section.items.forEach(item => {
+
+            html += `
+<div class="border rounded-md p-3 bg-white">
+
+    <div class="flex justify-between items-start">
+
+        <div>
+
+            <div class="font-medium">
+                ${item.name}
+                –
+                ${item.fullName}
+            </div>
+
+            <div class="text-sm text-slate-500">
+
+                Markah:
+                ${item.fullMarks}
+
+                ${
+                    item.weightage !== undefined
+                    ? `| Weightage: ${item.weightage}%`
+                    : ''
+                }
+
+            </div>
+
+        </div>
+
+        <button
+            class="edit-assessment-btn
+                   px-3 py-1
+                   text-sm
+                   bg-blue-600
+                   text-white
+                   rounded"
+	    data-year="${academicYear}"
+            data-program="${programme}"
+            data-semester="${semester}"
+            data-code="${item.name}">
+
+            Edit
+
+        </button>
+
+    </div>
+
+                     
+
+              
+            `;
+
+            if (item.components) {
+
+                html += `
+                    <div class="mt-2 ml-4 text-sm text-slate-600">
+                `;
+
+                Object.values(item.components)
+                    .forEach(component => {
+
+                        html += `
+                            <div>
+                                ↳
+                                ${component.label}
+                                (/ ${component.max})
+                            </div>
+                        `;
+
+                    });
+
+                html += `</div>`;
+            }
+
+            html += `</div>`;
+        });
+
+     html += `
+                </div>
+            </div>
+        `;
+
+assessmentConfigContainer.innerHTML += html;
+
+});
+assessmentConfigContainer
+    .querySelectorAll('.edit-assessment-btn')
+    .forEach(btn => {
+
+        btn.onclick = async () => {
+            const academicYear = btn.dataset.year;
+            const code = btn.dataset.code;
+            const programme = btn.dataset.program;
+            const semester = btn.dataset.semester;
+
+            const { data } = await supabaseClient
+                .from('assessment_settings')
+                .select('*')
+                                         .eq('academic_year', academicYear)
+                .eq('programme', programme)
+                .eq('semester', semester)
+                .eq('assessment_code', code)
+                .single();
+
+            if (!data) return;
+editAssessmentComponents.innerHTML = '';
+
+const { data: componentData } = await supabaseClient
+    .from('assessment_components')
+    .select('*')
+    .eq('assessment_setting_id', data.id)
+    .order('display_order');
+console.log(
+    'Assessment ID:',
+    data.id,
+    'Components:',
+    componentData
+);
+
+if (componentData?.length) {
+
+    componentData.forEach(component => {
+
+        editAssessmentComponents.innerHTML += `
+            <div>
+
+                <label class="block text-sm font-medium">
+
+                    ${component.component_name}
+
+                </label>
+
+                <input
+                    type="number"
+                    class="component-max-input
+                           w-full
+                           rounded
+                           border"
+
+                    data-component-id="${component.id}"
+
+                    value="${component.full_marks}">
+
+            </div>
+        `;
+
+    });
+
+}
+
+            editAssessmentId.value = data.id;
+            editAssessmentName.value = data.assessment_name;
+            editAssessmentMarks.value = data.full_marks;
+            editAssessmentWeightage.value =
+    data.weightage ?? '';
+
+
+
+assessmentEditModal.classList.remove('hidden');
+        };
+
+    });
+}
 
             function renderMarkEntryTable() {
                 const assessmentName = assessmentSelectEl.value;
@@ -1010,19 +1651,118 @@ const allAssessmentStructures = {
                 }
 
                 currentAssessmentDisplay.textContent = assessment.fullName;
-                markEntryHead.innerHTML = `<tr><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Bil.</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Pelajar</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">No. Matrik</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Markah (/ ${assessment.fullMarks})</th></tr>`;
+                if (
+    assessment.components &&
+    Object.keys(assessment.components).length > 0
+) {
+markEntryHead.innerHTML = `<tr><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Bil.</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Pelajar</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">No. Matrik</th>${Object.values(assessment.components)
+      .map(c => `<th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">${c.label} (/ ${c.max})</th>`)
+      .join('')}
+    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Jumlah (/ ${assessment.fullMarks})</th></tr>`;}
+else {
+markEntryHead.innerHTML = `
+  <tr>
+    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Bil.</th>
+    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nama Pelajar</th>
+    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">No. Matrik</th>
+    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Markah (/ ${assessment.fullMarks})</th>
+  </tr>`;
+}
+
                 markEntryBody.innerHTML = '';
                 const students = state.classes[state.currentClass]?.students || [];
                 const classScores = state.scores[state.currentClass] || {};
                 
                 students.forEach((student, index) => {
                     const studentScores = classScores[student.NoMatrik] || {};
-                    const score = studentScores[assessment.name] === null || studentScores[assessment.name] === undefined ? '' : studentScores[assessment.name];
+                    const iaData = studentScores[assessment.name] || {};
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${index + 1}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">${student.NamaPelajar}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">${student.NoMatrik}</td><td class="px-6 py-4"><input type="number" class="score-input w-24 rounded-md border-slate-300" data-student-matric="${student.NoMatrik}" value="${score}" ${!state.isEditMode ? 'disabled' : ''}></td>`;
+                    
+if (
+    assessment.components &&
+    Object.keys(assessment.components).length > 0
+) {
+  const componentInputs = Object.entries(assessment.components)
+    .map(([key, comp]) => `
+      <td class="px-6 py-4">
+        <input type="number"
+          class="ia-input w-20 rounded-md border-slate-300"
+          data-assessment="${assessment.name}"
+          data-component="${key}"
+          data-student-matric="${student.NoMatrik}"
+          data-max="${comp.max}"
+          value="${iaData[key] ?? ''}"
+          ${!state.isEditMode ? 'disabled' : ''}>
+      </td>
+    `).join('');
+
+  row.innerHTML = `
+    <td class="px-6 py-4">${index + 1}</td>
+    <td class="px-6 py-4 font-medium">${student.NamaPelajar}</td>
+    <td class="px-6 py-4">${student.NoMatrik}</td>
+    ${componentInputs}
+    <td class="px-6 py-4 font-medium ia-total">
+      ${iaData.total ?? ''}
+    </td>
+  `;
+
+} else {
+
+  const score =
+    studentScores[assessment.name] === null ||
+    studentScores[assessment.name] === undefined
+      ? ''
+      : studentScores[assessment.name];
+
+  row.innerHTML = `
+    <td class="px-6 py-4">${index + 1}</td>
+    <td class="px-6 py-4 font-medium">${student.NamaPelajar}</td>
+    <td class="px-6 py-4">${student.NoMatrik}</td>
+    <td class="px-6 py-4">
+      <input type="number"
+        class="score-input w-24 rounded-md border-slate-300"
+        data-student-matric="${student.NoMatrik}"
+        value="${score}"
+        ${!state.isEditMode ? 'disabled' : ''}>
+    </td>
+  `;
+}
+
                     markEntryBody.appendChild(row);
                 });
                 markEntryArea.classList.remove('hidden');
+if (assessment.components) {
+  markEntryBody.querySelectorAll('.ia-input').forEach(input => {
+    input.addEventListener('input', e => {
+
+      const row = e.target.closest('tr');
+      const matrik = e.target.dataset.studentMatric;
+      const assName = e.target.dataset.assessment;
+
+      let total = 0;
+      const iaResult = {};
+
+      Object.entries(assessment.components).forEach(([key, comp]) => {
+        const el = row.querySelector(`[data-component="${key}"]`);
+        let val = Number(el.value || 0);
+
+        val = Math.min(val, comp.max);
+        el.value = val;
+
+        iaResult[key] = val;
+        total += val;
+      });
+
+      iaResult.total = total;
+      row.querySelector('.ia-total').textContent = total;
+
+      state.scores[state.currentClass] ??= {};
+      state.scores[state.currentClass][matrik] ??= {};
+      state.scores[state.currentClass][matrik][assName] = iaResult;
+    });
+  });
+}
+
                 
                 // Lumpuhkan butang simpan jika bukan mod edit
                 saveMarksBtn.disabled = !state.isEditMode;
@@ -1043,124 +1783,73 @@ const allAssessmentStructures = {
                 return { grade: 'F', point: 0.00, status: 'GAGAL' };
             }
 
-            function calculateScores(className, studentMatric, program, semester) {
-  		const classScores = state.scores[className] || {};
-  		const studentScores = classScores[studentMatric] || {};
-  		const structure = getAssessmentStructure(program, semester);
+           function calculateScores(
+    className,
+    studentMatric,
+    program,
+    semester,
+    academicYear = state.viewableYear
+) {
+    const classScores = state.scores[className] || {};
+    const studentScores = classScores[studentMatric] || {};
 
-  		// =========================
-  // Helper Functions
-  // =========================
-  const toNum = (v) => {
-    const n = parseFloat(v);
-    return isNaN(n) ? null : n;
-  };
+    const structure =
+        getAssessmentStructure(
+            program,
+            semester,
+            academicYear
+        );
 
-  const round3 = (num) => Math.round(num * 1000) / 1000;
+  		// PB (mengikut weightage dalam struktur.pb)
+  		let pbTotal = 0;
+  		structure.pb.forEach(ass => {
+  let raw = 0;
 
-  const safeDivide = (a, b) => (b > 0 ? a / b : 0);
-
-
-  // =========================
-  // PB Calculation
-  // =========================
-  const pb = structure.pb.reduce((total, ass) => {
-    let raw = 0;
-
-    if (ass.components) {
-      raw = studentScores[ass.name]?.total || 0;
-    } else {
-      raw = Number(studentScores[ass.name] || 0);
-    }
-
-    const normalized = safeDivide(raw, ass.fullMarks) * ass.weightage;
-    return total + normalized;
-
-  }, 0);
-
-
-  // =========================
-  // UPS (normalize to 20)
-  // =========================
-  let upsScore = 0;
-  let upsFull = 0;
-
-  structure.ups.forEach(ass => {
-    const s = toNum(studentScores[ass.name]);
-    if (s !== null) {
-      upsScore += s;
-      upsFull += ass.fullMarks;
-    }
-  });
-
-  const ups = safeDivide(upsScore, upsFull) * 20;
-
-
-  // =========================
-  // Topikal (normalize to 40)
-  // =========================
-  let topikalScore = 0;
-  let topikalFull = 0;
-
-  structure.topikal.forEach(ass => {
-    const s = toNum(studentScores[ass.name]);
-    if (s !== null) {
-      topikalScore += s;
-      topikalFull += ass.fullMarks;
-    }
-  });
-
-  const topikal = safeDivide(topikalScore, topikalFull) * 40;
-
-
-  // =========================
-  // Trial (ETR2)
-  // =========================
-  let trial = 0;
-
-  if (structure.trial?.length > 0) {
-    const t = structure.trial[0];
-    const s = toNum(studentScores[t.name]);
-
-    if (s !== null) {
-      trial = safeDivide(s, t.fullMarks) * t.weightage;
-    }
+  if (ass.components) {
+    raw = studentScores[ass.name]?.total || 0;
+  } else {
+    raw = Number(studentScores[ass.name] || 0);
   }
 
-
-  // =========================
-  // ETR Calculations
-  // =========================
-  const etr1_raw = topikal + pb + ups;
-  const etr2_raw = trial + pb + ups;
-  const etrAvg_raw = (etr1_raw + etr2_raw) / 2;
+  pbTotal += (raw / ass.fullMarks) * ass.weightage;
+});
 
 
-  // =========================
-  // Final Rounded Values
-  // =========================
-  const result = {
-    pb: round3(pb),
-    ups: round3(ups),
-    topikal: round3(topikal),
-    trial: round3(trial),
+  		// UPS -> normal ke 20
+  		let totalUpsScore = 0, totalUpsFull = 0;
+  		structure.ups.forEach(ass => {
+    		const s = parseFloat(studentScores[ass.name]);
+    		if (!isNaN(s)) { totalUpsScore += s; totalUpsFull += ass.fullMarks; }
+  		});
+  		const ups = totalUpsFull > 0 ? (totalUpsScore / totalUpsFull) * 20 : 0;
 
-    etr1: round3(etr1_raw),
-    etr2: round3(etr2_raw),
-    etrAvg: round3(etrAvg_raw),
-  };
+  		// Topikal -> normal ke 40 (untuk ETR1)
+  		let topikalPctSum = 0, topikalCount = 0;
+  		structure.topikal.forEach(ass => {
+    		const s = parseFloat(studentScores[ass.name]);
+    		if (!isNaN(s)) { topikalPctSum += s; topikalCount += ass.fullMarks; }
+  		});
+  		const topikal = topikalCount > 0 ? (topikalPctSum / topikalCount) * 40 : 0;
 
+  		// Percubaan -> normal ke 40 (untuk ETR2) jika ada
+  		let trial = 0;
+  		if (structure.trial && structure.trial.length > 0) {
+    		const t = structure.trial[0];
+    		const s = parseFloat(studentScores[t.name]);
+    		if (!isNaN(s)) trial = (s / t.fullMarks) * t.weightage; // weightage 40
+  		}
 
-  // =========================
-  // Grades
-  // =========================
-  result.grade1 = getGradeInfo(result.etr1);
-  result.grade2 = getGradeInfo(result.etr2);
-  result.gradeAvg = getGradeInfo(result.etrAvg);
+  		const pb = pbTotal;
+  		const etr1 = topikal + pb + ups;
+  		const etr2 = trial + pb + ups;
+  		const etrAvg = (etr1 + etr2) / 2;
 
+  		const grade1 = getGradeInfo(etr1);
+  		const grade2 = getGradeInfo(etr2);
+  		const gradeAvg = getGradeInfo(etrAvg);
 
-  return result;
-};
+  		return { pb, ups, topikal, trial, etr1, etr2, etrAvg, grade1, grade2, gradeAvg };
+		}
 
 
 function renderAllClassReports() {
@@ -1189,12 +1878,21 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
 
   // --- PB & UPS header (tambah trial jika ada) ---
   let pbUpsHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
-  (structure.pb || []).forEach(a => pbUpsHeader += `<th class="px-2 py-2">${a.name}</th>`);
+  (structure.pb || []).forEach(a => {
+  if (a.components) {
+    Object.values(a.components).forEach(c => {
+      pbUpsHeader += `<th class="px-2 py-2">${a.name}-${c.label}</th>`;
+    });
+    pbUpsHeader += `<th class="px-2 py-2">${a.name}-Jumlah</th>`;
+  } else {
+    pbUpsHeader += `<th class="px-2 py-2">${a.name}</th>`;
+  }
+});
+
   (structure.ups || []).forEach(a => pbUpsHeader += `<th class="px-2 py-2">${a.name}</th>`);
   
-  
   // Tambah header ringkasan ETR dan gred
-  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">PB(40%)</th><th class="px-2 py-2 font-bold text-blue-600">UPS(20%)</th><th class="px-2 py-2 font-bold text-green-600">(60%)</th></tr></thead>`;
+  pbUpsHeader += `<th class="px-2 py-2 font-bold text-blue-600">PB(40%)</th><th class="px-2 py-2 font-bold text-blue-600">UPS(20%)</th><th class="px-2 py-2 font-bold text-green-600">Jumlah(60%)</th></tr></thead>`;
 
   let pbUpsBody = '<tbody>';
   students.forEach((student, index) => {
@@ -1212,22 +1910,58 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
 
     // PB cells
     (structure.pb || []).forEach(a => {
-      const score = studentScores[a.name];
-      const scoreDisplay = (score === null || score === undefined) ? '' : score;
-      const weightedScore = (score === null || score === undefined) ? '' : `(${((score / a.fullMarks) * a.weightage).toFixed(1)}%)`;
-      rowHtml += `<td class="px-2 py-2">${scoreDisplay} <span class="text-xs text-slate-500">${weightedScore}</span></td>`;
+
+  const scoreData = studentScores[a.name];
+
+  // === JIKA IA (berkomponen) ===
+  if (a.components && scoreData && typeof scoreData === 'object') {
+
+    // Papar Essay & Rubrik
+    Object.keys(a.components).forEach(key => {
+      rowHtml += `<td class="px-2 py-2">${scoreData[key] ?? ''}</td>`;
     });
+
+    // Papar Jumlah + weighted
+    const total = scoreData.total ?? '';
+    const weighted = (total === '')
+      ? ''
+      : `(${((total / a.fullMarks) * a.weightage).toFixed(1)}%)`;
+
+    rowHtml += `
+      <td class="px-2 py-2 font-medium">
+        ${total}
+        <span class="text-xs text-slate-500">${weighted}</span>
+      </td>
+    `;
+
+  } 
+  // === ASSESSMENT BIASA ===
+  else {
+    const score = scoreData;
+    const scoreDisplay = (score === null || score === undefined) ? '' : score;
+    const weightedScore = (score === null || score === undefined)
+      ? ''
+      : `(${((score / a.fullMarks) * a.weightage).toFixed(1)}%)`;
+
+    rowHtml += `
+      <td class="px-2 py-2">
+        ${scoreDisplay}
+        <span class="text-xs text-slate-500">${weightedScore}</span>
+      </td>
+    `;
+  }
+});
+
 
     // UPS cells
     (structure.ups || []).forEach(a => {
       const val = studentScores[a.name];
       rowHtml += `<td class="px-2 py-2">${val === null || val === undefined ? '' : val}</td>`;
     });
-
-    
+ 
 
     // Jml PB / Jml UPS / Akhir
-    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${pbVal.toFixed(2)}</td>`;
+    rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${pbVal.toFixed(1)}</td>`;
     rowHtml += `<td class="px-2 py-2 font-bold text-blue-600">${upsVal.toFixed(1)}</td>`;
     rowHtml += `<td class="px-2 py-2 font-bold text-green-600">${akhirVal.toFixed(1)}</td>`;
 
@@ -1240,10 +1974,10 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
   // --- Topikal report (tambah ETR1/ETR2/Avg jika mahu) ---
   let topikalHeader = `<thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr><th class="px-2 py-2">Bil</th><th class="px-2 py-2">Nama</th>`;
   structure.topikal.forEach(a => {
-    topikalHeader += `<th class="px-2 py-2">${a.name}(%)</th>`;
+    topikalHeader += `<th class="px-2 py-2">${a.name}(Mrk/%)</th>`;
   });
 // jika ada trial, paparkan juga kolum trial
-if (structure.trial && structure.trial.length) {
+  if (structure.trial && structure.trial.length) {
     structure.trial.forEach(t => topikalHeader += `<th class="px-2 py-2">${t.name}</th>`);
   }
   // Tambah lajur ringkasan ETR1/ETR2/Avg dan gred purata/status
@@ -1281,13 +2015,14 @@ if (structure.trial && structure.trial.length) {
       }
       topikalBody += `<td class="px-2 py-2">${scoreDisplay} <span class="text-xs text-slate-500">${percentageDisplay}</span></td>`;
     });
-    // Trial cells (jika ada)
+// Trial cells (jika ada)
     if (structure.trial && structure.trial.length) {
       structure.trial.forEach(t => {
         const v = studentScores[t.name];
         topikalBody += `<td class="px-2 py-2">${v === null || v === undefined ? '' : v}</td>`;
       });
-    }
+}
+
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${utVal.toFixed(1)}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr1).toFixed(1)}</td>`;
     topikalBody += `<td class="px-2 py-2 font-bold text-purple-600">${Number(etr2).toFixed(1)}</td>`;
@@ -1300,7 +2035,6 @@ if (structure.trial && structure.trial.length) {
   let classPNGK = (totalGradePoints / (students.length || 1)).toFixed(2);
   topikalReportDisplay.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-sm text-left text-slate-500">${topikalHeader}${topikalBody}</table></div><div class="mt-4 text-right"><h4 class="text-lg font-bold text-slate-800">Purata Nilai Gred Kelas (PNGK): <span class="text-red-600">${classPNGK}</span></h4></div>`;
 }
-
 
             function renderDashboard() {
                 // Generate tables for SES and SDS separately
@@ -1320,7 +2054,8 @@ if (structure.trial && structure.trial.length) {
                     let headHTML = `<tr><th rowspan="2" class="px-2 py-2 text-left text-xs font-medium text-slate-500 uppercase sticky left-0 bg-slate-50 z-10">Kelas</th>`;
                     headHTML += `<th colspan="${progStructure.topikal.length}" class="px-2 py-2 text-xs font-medium text-slate-500 uppercase bg-slate-100 border-l">Ujian Topikal</th>`;
                     headHTML += `<th colspan="${progStructure.pb.length}" class="px-2 py-2 text-xs font-medium text-slate-500 uppercase bg-slate-200 border-l">Penilaian Berterusan</th>`;
-                    headHTML += `<th colspan="${progStructure.ups.length}" class="px-2 py-2 text-xs font-medium text-slate-500 uppercase bg-slate-100 border-l">UPS</th></tr>`;
+                    headHTML += `<th colspan="${progStructure.ups.length}" class="px-2 py-2 text-xs font-medium text-slate-500 uppercase bg-slate-100 border-l">UPS</th>`;
+		    headHTML += `<th colspan="${progStructure.trial.length}" class="px-2 py-2 text-xs font-medium text-slate-500 uppercase bg-slate-200 border-l">SCH</th></tr>`;
                     headHTML += `<tr>`;
                     progAssessments.forEach(ass => {
                         headHTML += `<th class="px-2 py-2 text-xs font-medium text-slate-500 uppercase border-l" data-assessment-name="${ass.name}">${ass.name}</th>`;
@@ -1561,12 +2296,33 @@ state.classes[className] = {
                 });
 
                 if (state.isEditMode) {
-                    tabEntry.disabled = false; tabAdmin.disabled = false;
-                    entryDisabledWarning.classList.add('hidden'); adminDisabledWarning.classList.add('hidden');
-                } else {
-                    tabEntry.disabled = true; tabAdmin.disabled = true;
-                    entryDisabledWarning.classList.remove('hidden'); adminDisabledWarning.classList.remove('hidden');
-                }
+
+    tabEntry.disabled = false;
+    entryDisabledWarning.classList.add('hidden');
+
+} else {
+
+    tabEntry.disabled = true;
+    entryDisabledWarning.classList.remove('hidden');
+}
+
+/* Admin should ALWAYS access Urus Data */
+
+if (state.user?.role === 'admin') {
+
+    tabAdmin.disabled = false;
+    adminDisabledWarning.classList.add('hidden');
+
+} else {
+
+    tabAdmin.disabled = !state.isEditMode;
+
+    if (state.isEditMode) {
+        adminDisabledWarning.classList.add('hidden');
+    } else {
+        adminDisabledWarning.classList.remove('hidden');
+    }
+}
 
                 if (!state.visibleLecturerClasses.includes(state.currentClass)) {
                     state.currentClass = null;
@@ -1674,6 +2430,144 @@ const assessmentName = assessments[assessmentIndex]?.name;
 
                 saveMarksBtn.addEventListener('click', () => saveScoresToSupabase(false));
 
+saveMarksBtn.addEventListener('click', () => saveScoresToSupabase(false));
+
+if (saveConfigBtn) {
+    saveConfigBtn.addEventListener('click', saveSystemSettings);
+}
+
+assessmentConfigYear?.addEventListener(
+    'change',
+    renderAssessmentConfigViewer
+);
+
+assessmentConfigProgram?.addEventListener(
+    'change',
+    renderAssessmentConfigViewer
+);
+
+assessmentConfigSemester?.addEventListener(
+    'change',
+    renderAssessmentConfigViewer
+);
+
+cancelAssessmentEdit.onclick = () => {
+
+    assessmentEditModal
+        .classList
+        .add('hidden');
+
+};
+
+saveAssessmentEdit.onclick =
+    async () => {
+
+
+
+        const { error } =
+            await supabaseClient
+                .from('assessment_settings')
+               .update({
+
+    assessment_name:
+        editAssessmentName.value,
+
+    full_marks:
+        Number(editAssessmentMarks.value),
+
+    weightage:
+        editAssessmentWeightage.value === ''
+            ? null
+            : Number(
+                editAssessmentWeightage.value
+            )
+
+})
+                .eq(
+                    'id',
+                    editAssessmentId.value
+                );
+const componentInputs =
+    editAssessmentComponents.querySelectorAll(
+        '.component-max-input'
+    );
+
+for (const input of componentInputs) {
+
+    const componentId =
+        input.dataset.componentId;
+
+    const marks =
+        Number(input.value);
+
+    const { error: componentError } =
+        await supabaseClient
+            .from('assessment_components')
+            .update({
+
+                full_marks: marks
+
+            })
+            .eq('id', componentId);
+
+    if (componentError) {
+
+        alert(componentError.message);
+        return;
+
+    }
+
+}
+
+
+if (componentInputs.length > 0) {
+
+    let componentTotal = 0;
+
+    componentInputs.forEach(input => {
+
+        componentTotal +=
+            Number(input.value || 0);
+
+    });
+
+    if (
+        componentTotal !==
+        Number(editAssessmentMarks.value)
+    ) {
+
+        alert(
+            `Jumlah komponen (${componentTotal})
+             mesti sama dengan markah penuh
+             (${editAssessmentMarks.value}).`
+        );
+
+        return;
+
+    }
+
+}
+
+        if (error) {
+
+            alert(error.message);
+            return;
+
+        }
+
+        await loadAssessmentStructures();
+
+        renderAssessmentConfigViewer();
+
+        assessmentEditModal
+            .classList
+            .add('hidden');
+
+        alert(
+            'Penilaian berjaya dikemaskini.'
+        );
+
+    };
                 // Pengurusan Tab Utama
                 tabDashboard.addEventListener('click', () => {
                     switchTab('dashboard');
@@ -1716,6 +2610,7 @@ const assessmentName = assessments[assessmentIndex]?.name;
                 tabAdmin.addEventListener('click', () => {
                     if (tabAdmin.disabled) return;
                     switchTab('admin');
+			renderAssessmentConfigViewer();
                 });
 
                 // Report sub-tab toggles
@@ -1754,19 +2649,22 @@ const assessmentName = assessments[assessmentIndex]?.name;
                     await supabaseClient.auth.signOut();
                     channel && supabaseClient.removeChannel(channel);
                     state = {
-                        user: null,
-                        allLecturers: [],
-                        allStudents: [],
-                        visibleClasses: {},
-                        visibleLecturerClasses: [],
-                        scores: {},
-                        currentClass: null,
-                        currentProgram: null,
-                        viewableYear: CURRENT_ACADEMIC_YEAR,
-                        viewableSemester: CURRENT_SEMESTER,
-                        isEditMode: true,
-                        viewMode: null
-                    };
+    user: null,
+    allLecturers: [],
+    allStudents: [],
+    visibleClasses: {},
+    visibleLecturerClasses: [],
+    scores: {},
+    currentClass: null,
+    currentProgram: null,
+    viewableYear: CURRENT_ACADEMIC_YEAR,
+    viewableSemester: CURRENT_SEMESTER,
+    isEditMode: true,
+    viewMode: null,
+
+    dbAssessmentStructures: {},
+    useDatabaseStructures: true
+};
                     appScreen.classList.add('hidden');
                     loginScreen.classList.remove('hidden');
                     connectionStatusEl.textContent = 'Status: Memulakan sistem...';
@@ -1926,21 +2824,33 @@ function renderClassAnalysis() {
                     tabAdmin.classList.add('text-blue-600', 'border-blue-600');
                 }
             }
+function generateAcademicSessions(baseSession, futureCount = 5, pastCount = 2) {
+    const [startYear] = baseSession.split('/').map(Number);
+
+    const sessions = [];
+
+    for (let i = -pastCount; i <= futureCount; i++) {
+        const year = startYear + i;
+        sessions.push(`${year}/${year + 1}`);
+    }
+
+    return sessions;
+}
 
             function updatePrintableArea() {
-                const currentDate = new Date().toLocaleDateString("ms-MY", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+				const currentDate = new Date().toLocaleDateString("ms-MY", {
+    			day: "numeric",
+    			month: "long",
+    			year: "numeric",
+  				});
                 const isTopikal = !topikalReportDisplay.classList.contains('hidden');
                 const html = `
                     <div>
-                        <h2 style="font-size:10px;font-weight:bold;margin-bottom:8px;">Laporan Kelas: ${reportClassNameEl.textContent || ''}</h2>
-			<h2 style="font-size:10px;font-weight:bold;margin-bottom:8px;">Pensyarah: ${reportLecturerNameEl.textContent || ''}</h2>
+                        <h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Laporan Kelas: ${reportClassNameEl.textContent || ''}</h2>
+			<h2 style="font-size:16px;font-weight:bold;margin-bottom:8px;">Pensyarah: ${reportLecturerNameEl.textContent || ''}</h2>
                         ${isTopikal ? topikalReportDisplay.innerHTML : pbUpsReportDisplay.innerHTML}
                     </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 		<div style="margin-top: 10px; text-align: left;font-size:10px;font-weight:bold;">
           	<p> Disediakan oleh: ${reportLecturerNameEl.textContent || ''}</p>
           	<p><strong>Tarikh:</strong> ${currentDate}</p>
@@ -1949,7 +2859,7 @@ function renderClassAnalysis() {
         	</div>
                 <div class="right-text">
 		<div style="margin-top: 5px; text-align: left;font-size:10px;font-weight:bold;">
-          	<p> Disemak oleh: </p>
+          	<p> Disahkan oleh: </p>
           	<p><strong>Tarikh:</p>
           	<p style="margin-top: 5px;"><em>Tandatangan</em></p>
           	<p style="margin-top: 10px;"><em>__________________________</em></p>
@@ -1961,6 +2871,43 @@ function renderClassAnalysis() {
 
             let adminListenersAttached = false;
 
+async function saveSystemSettings() {
+    console.log("saveSystemSettings triggered");
+    const { data, error } = await supabaseClient
+    .from('system_settings')
+    .update({
+        current_academic_year: configYearEl.value,
+        current_semester: configSemesterEl.value,
+        updated_by: state.user.id
+    })
+    .eq('id', 1)
+    .select();
+if (error) {
+    alert(error.message);
+    return;
+}
+
+if (!data || data.length === 0) {
+    alert('Rekod system_settings (id=1) tidak dijumpai.');
+    return;
+}
+
+    CURRENT_ACADEMIC_YEAR = configYearEl.value;
+    CURRENT_SEMESTER = configSemesterEl.value;
+
+    state.viewableYear = CURRENT_ACADEMIC_YEAR;
+    state.viewableSemester = CURRENT_SEMESTER;
+
+    yearSelectEl.value = CURRENT_ACADEMIC_YEAR;
+    semesterSelectEl.value = CURRENT_SEMESTER;
+await filterDataAndView();
+
+
+    renderDashboard();
+    renderAdminTab();
+
+    alert('Tetapan sistem berjaya disimpan.');
+}
             function renderAdminTab() {
                 // Guard: only proceed if admin content visible area exists
                 if (!adminProgramSelect || !adminClassSelect) return;
@@ -1972,14 +2919,41 @@ function renderClassAnalysis() {
                 ['SES', 'SDS'].forEach(p => adminProgramSelect.add(new Option(p, p)));
 
                 // Class options (only if available)
-                adminClassSelect.innerHTML = '';
-                if (hasClasses) {
-                    const classes = Object.keys(state.classes).sort();
-                    classes.forEach(c => adminClassSelect.add(new Option(c, c)));
-                }
+adminClassSelect.innerHTML = '';
+if (hasClasses) {
+    const classes = Object.keys(state.classes).sort();
+    classes.forEach(c => adminClassSelect.add(new Option(c, c)));
+}
 
-                // Show the admin panel body but keep entry area hidden until selections valid
-                adminMarkEntry.classList.remove('hidden');
+/* ===== NEW: Populate System Configuration ===== */
+
+configYearEl.innerHTML = '';
+
+generateAcademicSessions(CURRENT_ACADEMIC_YEAR)
+    .forEach(session => {
+        configYearEl.add(
+            new Option(session, session)
+        );
+    });
+
+configYearEl.value = CURRENT_ACADEMIC_YEAR;
+configSemesterEl.value = CURRENT_SEMESTER;
+
+assessmentConfigYear.innerHTML = '';
+
+generateAcademicSessions(CURRENT_ACADEMIC_YEAR)
+    .forEach(session => {
+        assessmentConfigYear.add(
+            new Option(session, session)
+        );
+    });
+
+assessmentConfigYear.value = CURRENT_ACADEMIC_YEAR;
+
+/* ============================================= */
+
+// Show the admin panel body...
+adminMarkEntry.classList.remove('hidden');
                 adminMarkEntryArea.classList.add('hidden');
                 adminAssessmentSelect.innerHTML = '';
 
@@ -2060,19 +3034,84 @@ function renderClassAnalysis() {
                     });
 
                     adminListenersAttached = true;
+			renderAssessmentConfigViewer();
                 }
             }
 
-            async function startApp() {
-                // If already signed in, skip to app
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                attachEventListeners(); // attach once
-                if (user) {
-                    loginScreen.classList.add('hidden');
-                    appScreen.classList.remove('hidden');
-                    await initializeAndFetchData(user);
-                    return;
-                }
+function compareStructures() {
+
+    const hardcoded =
+        JSON.stringify(allAssessmentStructures);
+
+    const database =
+        JSON.stringify(
+            state.dbAssessmentStructures
+        );
+
+    console.log(
+        'Structures match:',
+        hardcoded === database
+    );
+
+    if (!(
+        hardcoded === database
+    )) {
+
+        console.log(
+            'Hardcoded:',
+            allAssessmentStructures
+        );
+
+        console.log(
+            'Database:',
+            state.dbAssessmentStructures
+        );
+
+    }
+
+}
+           async function startApp() {
+
+    // If already signed in, skip to app
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
+    attachEventListeners(); // attach once
+
+    if (user) {
+
+        loginScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+const settingsLoaded =
+    await loadSystemSettings();
+
+if (!settingsLoaded) return;
+
+        const structuresLoaded =
+    await loadAssessmentStructures();
+
+if (!structuresLoaded) return;
+
+console.log(
+    'DB Structures:',
+    state.dbAssessmentStructures
+);
+
+try {
+    compareStructures();
+} catch (err) {
+    console.error(
+        'Structure comparison failed:',
+        err
+    );
+}
+
+await initializeAndFetchData(user);
+
+        return;
+    }
+
+}
 
                 // Login handler
                 loginBtn.addEventListener('click', async () => {
@@ -2092,9 +3131,21 @@ function renderClassAnalysis() {
                     }
                     loginScreen.classList.add('hidden');
                     appScreen.classList.remove('hidden');
-                    await initializeAndFetchData(data.user);
+                    const settingsLoaded =
+    await loadSystemSettings();
+
+if (!settingsLoaded) return;
+
+const structuresLoaded =
+    await loadAssessmentStructures();
+
+if (!structuresLoaded) return;
+
+compareStructures();
+
+await initializeAndFetchData(data.user);
                 });
-            }
+            
 
             // ------------------------------------------------------------------
 
@@ -2104,6 +3155,3 @@ function renderClassAnalysis() {
     </script>
 </body>
 </html>
-
-
-
