@@ -1269,9 +1269,7 @@ generateAcademicSessions(CURRENT_ACADEMIC_YEAR)
     });
 
 yearSelectEl.value = state.viewableYear;
-                allYears.forEach(year => {
-                    yearSelectEl.add(new Option(year, year));
-                });
+               
                 if (allYears.length === 0) {
   		// Jika sheet tidak mengandungi Tahun, tambah pilihan lalai supaya UI tidak kosong
   		yearSelectEl.add(new Option(CURRENT_ACADEMIC_YEAR, CURRENT_ACADEMIC_YEAR));
@@ -1802,17 +1800,28 @@ if (assessment.components) {
 
   		// PB (mengikut weightage dalam struktur.pb)
   		let pbTotal = 0;
-  		structure.pb.forEach(ass => {
-  let raw = 0;
 
-  if (ass.components) {
-    raw = studentScores[ass.name]?.total || 0;
-  } else {
-    raw = Number(studentScores[ass.name] || 0);
-  }
+structure.pb.forEach(ass => {
+    let raw = 0;
 
-  pbTotal += (raw / ass.fullMarks) * ass.weightage;
+    if (ass.components) {
+        raw = Number(studentScores[ass.name]?.total || 0);
+    } else {
+        raw = Number(studentScores[ass.name] || 0);
+    }
+
+    // Calculate weighted PB component
+    const componentMark = (raw / ass.fullMarks) * ass.weightage;
+
+    // Round EACH PB component to 1 decimal place
+    const roundedComponentMark = Number(componentMark.toFixed(1));
+
+    // Add the rounded component
+    pbTotal += roundedComponentMark;
 });
+
+// Final PB mark is out of 40
+pbTotal = Number(pbTotal.toFixed(1));
 
 
   		// UPS -> normal ke 20
@@ -2252,93 +2261,249 @@ function renderGradeDistributionChart(containerId, gradeData1, gradeData2 = null
 
 
             async function filterDataAndView() {
-                state.viewableYear = yearSelectEl.value;
-                state.viewableSemester = semesterSelectEl.value;
-                
-                state.isEditMode = (state.viewableYear === CURRENT_ACADEMIC_YEAR && state.viewableSemester === CURRENT_SEMESTER);
-                
-                let lecturerRows = [];
-                let allLecturerRowsForYear = state.allLecturers.filter(L => L.TahunAkademik === state.viewableYear && L.Semester === state.viewableSemester);
-                
-                if (state.user.role === 'pensyarah') {
-                    lecturerRows = allLecturerRowsForYear.filter(L => L.Email === state.user.email);
-                    state.currentProgram = lecturerRows[0]?.Program;
-                } else {
-                    lecturerRows = allLecturerRowsForYear;
-                    state.currentProgram = 'Semua';
-                }
-                
-                state.visibleLecturerClasses = [...new Set(lecturerRows.map(row => row.KelasDiajar.trim()))];
-                
-                state.classes = {};
-                const studentsForSession = state.allStudents.filter(s => s.TahunAkademik === state.viewableYear && s.Semester === state.viewableSemester);
-                
-                state.visibleLecturerClasses.forEach(className => {
-                    let programForClass = allLecturerRowsForYear.find(l => l.KelasDiajar === className)?.Program;
-                    const studentsInClass = studentsForSession.filter(s => s.Kelas === className && s.Program === programForClass);
-			// Cari baris pensyarah yang mengajar kelas ini (gunakan lecturerRows dahulu, fallback ke allLecturerRowsForYear)
-			const lecturerRow = (lecturerRows.find(l => (l.KelasDiajar || '').trim() === className.trim()))
-                 	|| (allLecturerRowsForYear.find(l => (l.KelasDiajar || '').trim() === className.trim()));
 
-		// Ambil nama pensyarah dan emel (sesuaikan nama medan mengikut struktur data anda)
-		const lecturerName = lecturerRow?.NamaPensyarah || lecturerRow?.Nama || lecturerRow?.LecturerName || '—';
-		const lecturerEmail = lecturerRow?.Email || lecturerRow?.Emel || '';
+    // =========================================================
+    // 1. Get selected session
+    // =========================================================
+    state.viewableYear = String(yearSelectEl.value || '').trim();
+    state.viewableSemester = String(semesterSelectEl.value || '').trim();
 
-// Simpan ke state.classes termasuk medan lecturer dan lecturerEmail
-state.classes[className] = {
-  students: studentsInClass,
-  program: programForClass,
-  lecturer: lecturerName,
-  lecturerEmail: lecturerEmail
-};
+    state.isEditMode =
+        state.viewableYear === String(CURRENT_ACADEMIC_YEAR).trim() &&
+        state.viewableSemester === String(CURRENT_SEMESTER).trim();
 
 
-                });
+    // =========================================================
+    // 2. Filter lecturer assignment by EXACT selected session
+    // =========================================================
+    const allLecturerRowsForSession =
+        (state.allLecturers || []).filter(L => {
 
-                if (state.isEditMode) {
+            const lecturerYear =
+                String(L.TahunAkademik || '').trim();
 
-    tabEntry.disabled = false;
-    entryDisabledWarning.classList.add('hidden');
+            const lecturerSemester =
+                String(L.Semester || '').trim();
 
-} else {
+            return (
+                lecturerYear === state.viewableYear &&
+                lecturerSemester === state.viewableSemester
+            );
+        });
 
-    tabEntry.disabled = true;
-    entryDisabledWarning.classList.remove('hidden');
-}
 
-/* Admin should ALWAYS access Urus Data */
+    // =========================================================
+    // 3. Determine lecturer rows based on viewing mode
+    // =========================================================
+    let lecturerRows = [];
 
-if (state.user?.role === 'admin') {
+    if (state.user.role === 'pensyarah') {
 
-    tabAdmin.disabled = false;
-    adminDisabledWarning.classList.add('hidden');
+        lecturerRows =
+            allLecturerRowsForSession.filter(
+                L =>
+                    String(L.Email || '').trim().toLowerCase() ===
+                    String(state.user.email || '').trim().toLowerCase()
+            );
 
-} else {
+        state.currentProgram =
+            lecturerRows[0]?.Program || null;
 
-    tabAdmin.disabled = !state.isEditMode;
-
-    if (state.isEditMode) {
-        adminDisabledWarning.classList.add('hidden');
     } else {
-        adminDisabledWarning.classList.remove('hidden');
+
+        // Admin / Ketua Unit
+        lecturerRows = allLecturerRowsForSession;
+
+        state.currentProgram = 'Semua';
+    }
+
+
+    // =========================================================
+    // 4. Get class names for SELECTED SESSION ONLY
+    // =========================================================
+    const sessionClasses =
+        [...new Set(
+            lecturerRows
+                .map(row => String(row.KelasDiajar || '').trim())
+                .filter(Boolean)
+        )];
+
+
+    // =========================================================
+    // 5. Get students for SELECTED SESSION ONLY
+    // =========================================================
+    const studentsForSession =
+        (state.allStudents || []).filter(student => {
+
+            const studentYear =
+                String(student.TahunAkademik || '').trim();
+
+            const studentSemester =
+                String(student.Semester || '').trim();
+
+            return (
+                studentYear === state.viewableYear &&
+                studentSemester === state.viewableSemester
+            );
+        });
+
+
+    // =========================================================
+    // 6. Build visible classes
+    // =========================================================
+    state.visibleLecturerClasses = [];
+
+    state.classes = {};
+
+
+    sessionClasses.forEach(className => {
+
+        // Find lecturer assignment for THIS session
+        const lecturerRow =
+            lecturerRows.find(
+                L =>
+                    String(L.KelasDiajar || '').trim() ===
+                    className
+            );
+
+        if (!lecturerRow) return;
+
+
+        const programForClass =
+            String(lecturerRow.Program || '').trim();
+
+
+        // Students MUST also belong to the selected session
+        const studentsInClass =
+            studentsForSession.filter(student => {
+
+                const studentClass =
+                    String(student.Kelas || '').trim();
+
+                const studentProgram =
+                    String(student.Program || '').trim();
+
+                return (
+                    studentClass === className &&
+                    studentProgram === programForClass
+                );
+            });
+
+
+        // -----------------------------------------------------
+        // IMPORTANT:
+        // Only expose classes that have students in the
+        // currently selected session.
+        // -----------------------------------------------------
+        if (studentsInClass.length === 0) {
+            return;
+        }
+
+
+        const lecturerName =
+            lecturerRow.NamaPensyarah ||
+            lecturerRow.Nama ||
+            lecturerRow.LecturerName ||
+            '—';
+
+        const lecturerEmail =
+            lecturerRow.Email ||
+            lecturerRow.Emel ||
+            '';
+
+
+        state.visibleLecturerClasses.push(className);
+
+        state.classes[className] = {
+
+            students: studentsInClass,
+
+            program: programForClass,
+
+            lecturer: lecturerName,
+
+            lecturerEmail: lecturerEmail
+
+        };
+
+    });
+
+
+    // =========================================================
+    // 7. Remove invalid current class
+    // =========================================================
+    if (
+        !state.visibleLecturerClasses.includes(
+            state.currentClass
+        )
+    ) {
+        state.currentClass = null;
+    }
+
+
+    // =========================================================
+    // 8. Entry tab availability
+    // =========================================================
+    if (state.isEditMode) {
+
+        tabEntry.disabled = false;
+
+        entryDisabledWarning.classList.add('hidden');
+
+    } else {
+
+        tabEntry.disabled = true;
+
+        entryDisabledWarning.classList.remove('hidden');
+    }
+
+
+    // =========================================================
+    // 9. Admin tab
+    // =========================================================
+    if (state.user?.role === 'admin') {
+
+        tabAdmin.disabled = false;
+
+        adminDisabledWarning.classList.add('hidden');
+
+    } else {
+
+        tabAdmin.disabled = !state.isEditMode;
+
+        if (state.isEditMode) {
+            adminDisabledWarning.classList.add('hidden');
+        } else {
+            adminDisabledWarning.classList.remove('hidden');
+        }
+    }
+
+
+    // =========================================================
+    // 10. Load scores for SELECTED SESSION
+    // =========================================================
+    await loadAndListenToScores();
+
+
+    // =========================================================
+    // 11. Refresh UI
+    // =========================================================
+    updateActiveClassDisplay();
+
+    renderDashboard();
+
+    renderAssessmentSelector();
+
+    switchTab('dashboard');
+
+
+    // =========================================================
+    // 12. Refresh Admin panel
+    // =========================================================
+    if (state.user?.role === 'admin') {
+        renderAdminTab();
     }
 }
-
-                if (!state.visibleLecturerClasses.includes(state.currentClass)) {
-                    state.currentClass = null;
-                }
-                
-                await loadAndListenToScores(); 
-                updateActiveClassDisplay(); 
-                renderDashboard(); 
-                renderAssessmentSelector(); 
-                switchTab('dashboard');
-
-                // Pastikan Admin tab dikemas kini selepas kelas ditapis
-                if (state.user && state.user.role === 'admin') {
-                    renderAdminTab();
-                }
-            }
 
             function attachEventListeners() {
                 assessmentSelectEl.addEventListener('change', renderMarkEntryTable);
