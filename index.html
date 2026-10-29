@@ -387,6 +387,49 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Senarai pelajar gred C dan ke bawah: Admin sahaja -->
+                    <section id="admin-low-grade-panel" class="mt-12 hidden bg-white rounded-lg shadow p-5 border border-amber-200">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                                    <i data-lucide="shield-alert" class="h-5 w-5 text-amber-600"></i>
+                                    Senarai Pelajar Gred C dan ke Bawah
+                                </h3>
+                                <p class="text-sm text-slate-500 mt-1">Paparan terhad kepada Admin. Senarai berdasarkan gred ETR Purata (ETR1 dan ETR2).</p>
+                            </div>
+                            <div id="admin-low-grade-count" class="rounded-lg bg-amber-50 text-amber-800 px-4 py-2 text-sm font-semibold">0 pelajar</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
+                            <div>
+                                <label for="admin-low-grade-class-filter" class="block text-sm font-medium text-slate-700 mb-1">Tapis kelas</label>
+                                <select id="admin-low-grade-class-filter" class="w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                    <option value="all">Semua kelas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="admin-low-grade-search" class="block text-sm font-medium text-slate-700 mb-1">Cari nama / nombor matrik</label>
+                                <input id="admin-low-grade-search" type="search" placeholder="Taip nama atau nombor matrik..." class="w-full rounded-md border-slate-300 shadow-sm text-sm" />
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto mt-4">
+                            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Bil.</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Nama Pelajar</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-600">No. Matrik</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Kelas</th>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-600">Program</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-slate-600">ETR Purata</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-slate-600">Gred</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-low-grade-body" class="bg-white divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                        <p id="admin-low-grade-empty" class="hidden text-sm text-slate-500 text-center py-6">Tiada pelajar bergred C dan ke bawah bagi sesi dan semester yang dipilih.</p>
+                    </section>
                 </div>
 
                 <!-- Tab 6: Urus Data (Admin) -->
@@ -2240,8 +2283,111 @@ else { reportLecturerNameEl.textContent = state.user.full_name; }
   // 2) Paparkan carta perbandingan gred (ETR1 vs ETR2) untuk SES dan SDS
   renderGradeDistributionChart('grade-distribution-chart-ses', overallGradeDistribution.SES.ETR1, overallGradeDistribution.SES.ETR2);
   renderGradeDistributionChart('grade-distribution-chart-sds', overallGradeDistribution.SDS.ETR1, overallGradeDistribution.SDS.ETR2);
+  renderAdminLowGradeStudents();
 }
 
+function renderAdminLowGradeStudents() {
+  const panel = document.getElementById('admin-low-grade-panel');
+  const tbody = document.getElementById('admin-low-grade-body');
+  const countEl = document.getElementById('admin-low-grade-count');
+  const emptyEl = document.getElementById('admin-low-grade-empty');
+  const classFilter = document.getElementById('admin-low-grade-class-filter');
+  const searchInput = document.getElementById('admin-low-grade-search');
+  if (!panel || !tbody) return;
+
+  // Panel ini khusus untuk role admin, bukan ketua_unit atau pensyarah.
+  if (state.user?.role !== 'admin') {
+    panel.classList.add('hidden');
+    return;
+  }
+  panel.classList.remove('hidden');
+
+  const lowGrades = new Set(['C', 'C-', 'D+', 'D', 'F']);
+  const rows = [];
+  Object.keys(state.classes || {}).sort().forEach(className => {
+    const classData = state.classes[className];
+    if (!classData) return;
+    const program = classData.program || '';
+    (classData.students || []).forEach(student => {
+      const calculated = calculateScores(className, student.NoMatrik, program, state.viewableSemester, state.viewableYear) || {};
+      const grade = calculated.gradeAvg?.grade || '';
+      if (!lowGrades.has(grade)) return;
+      rows.push({
+        name: student.NamaPelajar || student.Nama || '—',
+        matric: student.NoMatrik || '—',
+        className,
+        program,
+        etr: Number(calculated.etrAvg || 0),
+        grade
+      });
+    });
+  });
+
+  // Kekalkan pilihan penapis jika kelas masih wujud.
+  const previousClass = classFilter.value || 'all';
+  const classNames = [...new Set(rows.map(row => row.className))].sort();
+  classFilter.innerHTML = '<option value="all">Semua kelas</option>' + classNames.map(name =>
+    `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`
+  ).join('');
+  classFilter.value = classNames.includes(previousClass) ? previousClass : 'all';
+
+  const applyFilters = () => {
+    const selectedClass = classFilter.value;
+    const query = (searchInput.value || '').trim().toLowerCase();
+    const filtered = rows.filter(row => {
+      const matchClass = selectedClass === 'all' || row.className === selectedClass;
+      const matchSearch = !query || `${row.name} ${row.matric} ${row.className} ${row.program}`.toLowerCase().includes(query);
+      return matchClass && matchSearch;
+    });
+    countEl.textContent = `${filtered.length} pelajar`;
+    tbody.innerHTML = filtered.map((row, index) => {
+      const gradeClass = row.grade === 'C' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+      return `<tr class="hover:bg-slate-50">
+        <td class="px-3 py-2">${index + 1}</td>
+        <td class="px-3 py-2 font-medium text-slate-800">${escapeHtml(row.name)}</td>
+        <td class="px-3 py-2">${escapeHtml(row.matric)}</td>
+        <td class="px-3 py-2">${escapeHtml(row.className)}</td>
+        <td class="px-3 py-2">${escapeHtml(row.program)}</td>
+        <td class="px-3 py-2 text-center">${row.etr.toFixed(2)}</td>
+        <td class="px-3 py-2 text-center"><span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold ${gradeClass}">${escapeHtml(row.grade)}</span></td>
+      </tr>`;
+    }).join('');
+    emptyEl.classList.toggle('hidden', filtered.length > 0);
+    if (filtered.length === 0) tbody.innerHTML = '';
+  };
+
+  // Elakkan menambah event listener berulang kali setiap kali analisis dirender.
+  if (classFilter.dataset.bound !== '1') {
+    classFilter.addEventListener('change', () => renderAdminLowGradeStudents());
+    classFilter.dataset.bound = '1';
+  }
+  if (searchInput.dataset.bound !== '1') {
+    searchInput.addEventListener('input', () => renderAdminLowGradeStudents());
+    searchInput.dataset.bound = '1';
+  }
+
+  // Gunakan penapis dan input semasa tanpa memanggil fungsi secara rekursif.
+  const selectedClass = classFilter.value;
+  const query = (searchInput.value || '').trim().toLowerCase();
+  const filtered = rows.filter(row => {
+    const matchClass = selectedClass === 'all' || row.className === selectedClass;
+    const matchSearch = !query || `${row.name} ${row.matric} ${row.className} ${row.program}`.toLowerCase().includes(query);
+    return matchClass && matchSearch;
+  });
+  countEl.textContent = `${filtered.length} pelajar`;
+  tbody.innerHTML = filtered.map((row, index) => {
+    const gradeClass = row.grade === 'C' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+    return `<tr class="hover:bg-slate-50"><td class="px-3 py-2">${index + 1}</td><td class="px-3 py-2 font-medium text-slate-800">${escapeHtml(row.name)}</td><td class="px-3 py-2">${escapeHtml(row.matric)}</td><td class="px-3 py-2">${escapeHtml(row.className)}</td><td class="px-3 py-2">${escapeHtml(row.program)}</td><td class="px-3 py-2 text-center">${row.etr.toFixed(2)}</td><td class="px-3 py-2 text-center"><span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold ${gradeClass}">${escapeHtml(row.grade)}</span></td></tr>`;
+  }).join('');
+  emptyEl.classList.toggle('hidden', filtered.length > 0);
+  if (!filtered.length) tbody.innerHTML = '';
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[character]));
+}
 
 function renderGradeDistributionChart(containerId, gradeData1, gradeData2 = null) {
   const chartContainer = document.getElementById(containerId);
