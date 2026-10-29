@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Memuatkan ikon Lucide untuk antara muka yang lebih menarik -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS untuk eksport laporan Excel .xls -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Memuatkan Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Pautan Ikon Google Material -->
@@ -57,6 +59,9 @@
                 display: none;
             }
             #print-container {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
                 display: block;
                 position: absolute;
                 left: 0;
@@ -69,9 +74,14 @@
                 width: 100%;
             }
              #print-container th, #print-container td {
-                padding: 4px;
-                white-space: nowrap; /* Elak teks terpotong */
+                padding: 6px;
+                white-space: normal;
+                border: 1px solid #cbd5e1;
             }
+            #print-container table { border-collapse: collapse; margin: 8px 0 16px; }
+            #print-container h1, #print-container h2, #print-container h3 { color: #111827; }
+            #print-container .shadow, #print-container .rounded, #print-container .rounded-lg { box-shadow: none !important; }
+            @page { size: A4 portrait; margin: 12mm; }
         }
         
         /* Menyelaraskan ikon Google Material dengan teks */
@@ -298,10 +308,20 @@
 			<div class="mt-2 mb-4">
   			<p class="text-sm text-slate-700">Pensyarah Kelas: <strong id="report-lecturer" class="text-slate-800">—</strong></p>
 			</div>
-                        <button id="print-class-report-btn" class="bg-sky-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-600 flex items-center">
-                            <i data-lucide="printer" class="mr-2 h-5 w-5"></i>
-                            Cetak Laporan Semasa
-                        </button>
+                        <div class="flex flex-wrap gap-2 justify-end">
+                            <button id="download-pb-ups-xls-btn" type="button" class="bg-emerald-600 text-white font-semibold py-2 px-3 rounded-md hover:bg-emerald-700 flex items-center">
+                                <i data-lucide="file-spreadsheet" class="mr-2 h-5 w-5"></i>
+                                Muat Turun PB &amp; UPS (.xls)
+                            </button>
+                            <button id="download-topikal-xls-btn" type="button" class="bg-emerald-600 text-white font-semibold py-2 px-3 rounded-md hover:bg-emerald-700 flex items-center">
+                                <i data-lucide="file-spreadsheet" class="mr-2 h-5 w-5"></i>
+                                Muat Turun UT / ETR (.xls)
+                            </button>
+                            <button id="print-class-report-btn" class="bg-sky-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-600 flex items-center">
+                                <i data-lucide="printer" class="mr-2 h-5 w-5"></i>
+                                Cetak Laporan Semasa
+                            </button>
+                        </div>
                     </div>
                     <div id="pb-ups-report-display" class="mt-4">
                         <!-- Laporan PB & UPS akan dipaparkan di sini -->
@@ -313,7 +333,13 @@
                 
                 <!-- Tab 4: Analisis Kelas -->
                 <div id="class-analysis-content" class="mt-6 hidden">
-                    <h3 class="text-lg font-semibold text-slate-800">Analisis Kelas: <span id="class-analysis-title" class="text-blue-600"></span></h3>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-lg font-semibold text-slate-800">Analisis Kelas: <span id="class-analysis-title" class="text-blue-600"></span></h3>
+                        <button id="print-class-analysis-btn" type="button" class="bg-sky-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-700 flex items-center gap-2">
+                            <i data-lucide="printer" class="h-5 w-5"></i>
+                            Cetak Analisis (PDF)
+                        </button>
+                    </div>
                     
                     <div class="mt-6">
                         <h4 class="text-md font-semibold text-slate-700">Analisis Mengikut Ujian Topikal (UT)</h4>
@@ -932,11 +958,14 @@ const allAssessmentStructures = {
             const saveMarksBtn = document.getElementById('save-marks-btn');
             const saveStatusEl = document.getElementById('save-status');
             const printClassReportBtn = document.getElementById('print-class-report-btn');
+            const downloadPbUpsXlsBtn = document.getElementById('download-pb-ups-xls-btn');
+            const downloadTopikalXlsBtn = document.getElementById('download-topikal-xls-btn');
             const tabReportPbUps = document.getElementById('tab-report-pb-ups');
             const tabReportTopikal = document.getElementById('tab-report-topikal');
             const pbUpsReportDisplay = document.getElementById('pb-ups-report-display');
             const topikalReportDisplay = document.getElementById('topikal-report-display');
             const printContainer = document.getElementById('print-container');
+            const printClassAnalysisBtn = document.getElementById('print-class-analysis-btn');
 
             // DOM Admin
             const adminDisabledWarning = document.getElementById('admin-disabled-warning');
@@ -2219,43 +2248,54 @@ function renderGradeDistributionChart(containerId, gradeData1, gradeData2 = null
   if (!chartContainer) return;
 
   const grades = ['A','A-','B+','B','B-','C+','C','C-','D+','D','F'];
-  // Tentukan max untuk skala
-  let maxCount = 1;
-  grades.forEach(g => {
-    const v1 = gradeData1?.[g] || 0;
-    const v2 = gradeData2?.[g] || 0;
-    maxCount = Math.max(maxCount, v1, v2);
+  const valueFor = (data, grade) => {
+    const value = Number(data?.[grade] ?? 0);
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  };
+  let maxCount = 0;
+  grades.forEach(grade => {
+    maxCount = Math.max(maxCount, valueFor(gradeData1, grade), valueFor(gradeData2, grade));
   });
 
-  // Bina HTML: setiap lajur mengandungi 2 bar (ETR1 biru, ETR2 hijau) jika gradeData2 wujud
-  let html = `<div class="w-full">`;
-  html += `<div class="flex items-end justify-between h-56 gap-3">`;
-  grades.forEach(g => {
-    const v1 = gradeData1?.[g] || 0;
-    const v2 = gradeData2?.[g] || 0;
-    const h1 = maxCount ? Math.round((v1 / maxCount) * 100) : 0;
-    const h2 = maxCount ? Math.round((v2 / maxCount) * 100) : 0;
+  // Carta SVG: bar kekal kelihatan dalam cetakan PDF walaupun latar CSS tidak dicetak.
+  const svgWidth = 880, svgHeight = 245;
+  const left = 14, right = 14, top = 18, plotHeight = 158;
+  const plotWidth = svgWidth - left - right;
+  const slot = plotWidth / grades.length;
+  const barWidth = gradeData2 ? Math.min(17, slot * 0.29) : Math.min(26, slot * 0.48);
+  const scaleMax = Math.max(maxCount, 1);
+  const yBase = top + plotHeight;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" role="img" aria-label="Carta taburan gred ETR kelas" style="display:block;width:100%;height:auto;overflow:visible;font-family:Arial,sans-serif">`;
+  svg += `<line x1="${left}" y1="${yBase}" x2="${svgWidth-right}" y2="${yBase}" stroke="#94a3b8" stroke-width="1.5"/>`;
 
-    html += `
-      <div class="flex flex-col items-center w-full">
-        <div class="flex items-end gap-1 h-44">
-          <div title="ETR1: ${v1}" class="w-6 bg-blue-500 rounded-t" style="height:${h1}%;"></div>
-          ${ gradeData2 ? `<div title="ETR2: ${v2}" class="w-6 bg-green-500 rounded-t" style="height:${h2}%;"></div>` : '' }
-        </div>
-        <div class="text-xs font-semibold mt-2">${g}</div>
-        <div class="text-xs text-slate-600 mt-1">${v1}${ gradeData2 ? ' / ' + v2 : '' }</div>
-      </div>`;
+  grades.forEach((grade, i) => {
+    const center = left + slot * (i + 0.5);
+    const v1 = valueFor(gradeData1, grade);
+    const v2 = valueFor(gradeData2, grade);
+    const h1 = v1 > 0 ? Math.max(2, (v1 / scaleMax) * plotHeight) : 0;
+    const h2 = v2 > 0 ? Math.max(2, (v2 / scaleMax) * plotHeight) : 0;
+    const x1 = gradeData2 ? center - barWidth - 1 : center - barWidth / 2;
+    const x2 = center + 1;
+    if (v1 > 0) {
+      svg += `<rect x="${x1.toFixed(2)}" y="${(yBase-h1).toFixed(2)}" width="${barWidth.toFixed(2)}" height="${h1.toFixed(2)}" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.7"/>`;
+    }
+    if (gradeData2 && v2 > 0) {
+      svg += `<rect x="${x2.toFixed(2)}" y="${(yBase-h2).toFixed(2)}" width="${barWidth.toFixed(2)}" height="${h2.toFixed(2)}" fill="#16a34a" stroke="#15803d" stroke-width="0.7"/>`;
+    }
+    svg += `<text x="${center.toFixed(2)}" y="${yBase+17}" font-size="11" font-weight="600" text-anchor="middle" fill="#334155">${grade}</text>`;
+    svg += `<text x="${center.toFixed(2)}" y="${yBase+33}" font-size="10" text-anchor="middle" fill="#475569">${v1}${gradeData2 ? ' / ' + v2 : ''}</text>`;
   });
-  html += `</div>`;
+  svg += `</svg>`;
 
-  // Legenda di bawah carta
-  html += `<div class="flex items-center gap-4 mt-4">`;
-  html += `<div class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 inline-block"></span><span class="text-sm">ETR1</span></div>`;
-  if (gradeData2) html += `<div class="flex items-center gap-2"><span class="w-3 h-3 bg-green-500 inline-block"></span><span class="text-sm">ETR2</span></div>`;
-  html += `</div>`;
-
-  html += `</div>`;
-  chartContainer.innerHTML = html;
+  chartContainer.innerHTML = `
+    <div style="width:100%;font-family:Arial,sans-serif;color:#334155;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+      ${svg}
+      <div style="display:flex;align-items:center;gap:16px;margin-top:8px;font-size:12px;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><rect x="1" y="1" width="11" height="11" fill="#2563eb" stroke="#1d4ed8"/></svg>ETR1</span>
+        ${gradeData2 ? '<span style="display:inline-flex;align-items:center;gap:6px;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><rect x="1" y="1" width="11" height="11" fill="#16a34a" stroke="#15803d"/></svg>ETR2</span>' : ''}
+      </div>
+      <div style="font-size:10px;color:#64748b;margin-top:6px;">Skala bar: bilangan pelajar (maksimum dalam carta: ${maxCount}). Nilai dipaparkan sebagai ETR1${gradeData2 ? ' / ETR2' : ''}.</div>
+    </div>`;
 }
 
 
@@ -2778,6 +2818,69 @@ if (componentInputs.length > 0) {
 			renderAssessmentConfigViewer();
                 });
 
+                // Eksport laporan kelas ke fail Excel .xls
+                function exportClassReportToXls(reportType) {
+                    if (!state.currentClass || !state.classes[state.currentClass]) {
+                        alert('Sila pilih kelas dari Dashboard dahulu.');
+                        return;
+                    }
+                    if (typeof XLSX === 'undefined') {
+                        alert('Modul eksport Excel tidak dapat dimuatkan. Sila semak sambungan internet dan cuba lagi.');
+                        return;
+                    }
+
+                    const isPbUps = reportType === 'pb-ups';
+                    const container = isPbUps ? pbUpsReportDisplay : topikalReportDisplay;
+                    const table = container.querySelector('table');
+                    if (!table || !table.rows.length) {
+                        alert('Tiada data laporan untuk dimuat turun.');
+                        return;
+                    }
+
+                    const classData = state.classes[state.currentClass] || {};
+                    const lecturer = (classData.lecturer || reportLecturerNameEl.textContent || '—').trim();
+                    const reportTitle = isPbUps ? 'Laporan PB & UPS' : 'Laporan Ujian Topikal (ETR)';
+                    const rows = [
+                        [reportTitle],
+                        ['Kelas', state.currentClass],
+                        ['Pensyarah', lecturer],
+                        ['Program', classData.program || ''],
+                        ['Semester', state.viewableSemester || ''],
+                        []
+                    ];
+
+                    Array.from(table.rows).forEach(tr => {
+                        rows.push(Array.from(tr.cells).map(cell => (cell.innerText || cell.textContent || '').replace(/\s+/g, ' ').trim()));
+                    });
+
+                    if (!isPbUps) {
+                        const pngkEl = container.querySelector('h4');
+                        if (pngkEl) {
+                            rows.push([]);
+                            rows.push([ (pngkEl.innerText || pngkEl.textContent || '').replace(/\s+/g, ' ').trim() ]);
+                        }
+                    }
+
+                    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+                    worksheet['!cols'] = rows.reduce((widths, row) => {
+                        row.forEach((value, index) => {
+                            const length = String(value ?? '').length;
+                            widths[index] = Math.min(32, Math.max(widths[index] || 10, length + 2));
+                        });
+                        return widths;
+                    }, [] ).map(wch => ({ wch }));
+                    const workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, isPbUps ? 'PB dan UPS' : 'UT dan ETR');
+                    workbook.Props = { Title: reportTitle, Subject: 'Laporan Kelas', Author: lecturer };
+                    const safeClass = String(state.currentClass).replace(/[^a-z0-9_-]+/gi, '_');
+                    const semester = String(state.viewableSemester || '').replace(/[^a-z0-9_-]+/gi, '_');
+                    const filename = `${safeClass}_${semester}_${isPbUps ? 'Laporan_PB_UPS' : 'Laporan_UT_ETR'}.xls`;
+                    XLSX.writeFile(workbook, filename, { bookType: 'biff8' });
+                }
+
+                downloadPbUpsXlsBtn.addEventListener('click', () => exportClassReportToXls('pb-ups'));
+                downloadTopikalXlsBtn.addEventListener('click', () => exportClassReportToXls('topikal'));
+
                 // Report sub-tab toggles
                 tabReportPbUps.addEventListener('click', () => {
                     tabReportPbUps.classList.add('text-blue-600', 'border-blue-600');
@@ -2795,6 +2898,17 @@ if (componentInputs.length > 0) {
                 // Print
                 printClassReportBtn.addEventListener('click', () => {
                     updatePrintableArea();
+                    window.print();
+                });
+
+                // Cetak analisis kelas ke PDF menggunakan dialog cetakan pelayar
+                printClassAnalysisBtn.addEventListener('click', () => {
+                    if (!state.currentClass || !state.classes[state.currentClass]) {
+                        alert('Sila pilih kelas dari Dashboard dahulu.');
+                        return;
+                    }
+                    renderClassAnalysis();
+                    updatePrintableClassAnalysisArea();
                     window.print();
                 });
 
@@ -3001,6 +3115,39 @@ function generateAcademicSessions(baseSession, futureCount = 5, pastCount = 2) {
 
     return sessions;
 }
+
+            function updatePrintableClassAnalysisArea() {
+                const currentDate = new Date().toLocaleDateString('ms-MY', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+                const className = state.currentClass || '';
+                const lecturerName = state.user?.full_name || '';
+                const program = state.classes[state.currentClass]?.program || '';
+                const year = state.viewableYear || '';
+                const semester = state.viewableSemester || '';
+                const utTable = document.querySelector('#class-analysis-content table');
+                const summary = document.querySelector('#grade-distribution-chart-class')?.previousElementSibling;
+                const chart = document.getElementById('grade-distribution-chart-class');
+
+                printContainer.innerHTML = `
+                    <div style="font-family:Arial,sans-serif;color:#111827;padding:12px;">
+                        <div style="text-align:center;border-bottom:2px solid #1d4ed8;padding-bottom:10px;margin-bottom:16px;">
+                            <h1 style="font-size:20px;font-weight:bold;margin:0 0 6px;">LAPORAN ANALISIS KELAS</h1>
+                            <p style="font-size:13px;margin:3px 0;">Kelas: <strong>${className}</strong> | Program: <strong>${program}</strong></p>
+                            <p style="font-size:12px;margin:3px 0;">Sesi Akademik: ${year} | Semester: ${semester}</p>
+                        </div>
+                        <h2 style="font-size:15px;font-weight:bold;margin:14px 0 8px;">Analisis Mengikut Ujian Topikal (UT)</h2>
+                        ${utTable ? utTable.outerHTML : '<p>Tiada jadual analisis UT.</p>'}
+                        <h2 style="font-size:15px;font-weight:bold;margin:22px 0 8px;">Ringkasan ETR dan PNGK</h2>
+                        ${summary ? summary.outerHTML : ''}
+                        <h2 style="font-size:15px;font-weight:bold;margin:22px 0 8px;">Taburan Gred ETR Kelas</h2>
+                        ${chart ? chart.innerHTML : '<p>Tiada carta taburan gred.</p>'}
+                        <div style="font-size:11px;margin-top:28px;border-top:1px solid #cbd5e1;padding-top:8px;">
+                            <p>Disediakan oleh: <strong>${lecturerName}</strong></p>
+                            <p>Tarikh cetakan: ${currentDate}</p>
+                        </div>
+                    </div>`;
+            }
 
             function updatePrintableArea() {
 				const currentDate = new Date().toLocaleDateString("ms-MY", {
